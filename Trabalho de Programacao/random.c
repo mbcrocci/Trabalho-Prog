@@ -1,3 +1,11 @@
+//
+//  random.c
+//  Trabalho de Programacao
+//
+//  Created by Maurizio Crocci on 02/06/14.
+//
+//
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -25,7 +33,7 @@ double uniforme_01()
 
 
 
-int main()
+int rmain()
 {
 	int i;
 	
