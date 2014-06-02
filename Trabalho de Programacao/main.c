@@ -27,7 +27,6 @@ int vizinhancas (int x, int y, int lin, int col, int quadro[lin][col]) // E melh
 {
     /* 
      Recebe as coordenadas (x, y) de uma posicao e o quadro mais as suas dimensoes
-     
      Baseado nas coordenadas ve as pessas a volta e decide se esta satisfeita
      Devolve 1 se estiver ou 0 se nao
      */
@@ -133,6 +132,7 @@ int main()
         CONFIGURCOES (esta tudo comentado para testar mais facilmente)
      */
     int i, j, satis;
+    char pass;
     
     int lin=8, col=15;
     /*
@@ -145,8 +145,9 @@ int main()
 
     int quadro[lin][col];
     // encher o quadro de zeros
-    for (i = 0; i < col; i++) {
-        for (j = 0; j < lin; j++) {
+    // printf("Quadro -> Continuar: "); scanf(" %[^\n]", &pass);
+    for (i = 0; i < lin; i++) {
+        for (j = 0; j < col; j++) {
             if (i == 5 && j == 7)
                 quadro[i][j] = 1;
             
@@ -178,12 +179,16 @@ int main()
     
 
     // 1 iteracao do quadro
-    for (i = 0; i < col; i++)
+    // printf("Vizinhanca -> Continuar: "); scanf(" %[^\n]", &pass);
+    for (i = 0; i < lin; i++)
     {
-        for (j = 1; j < lin; j++)
+        for (j = 1; j < col; j++)
         {
-            satis = vizinhancas(i, j, lin, col, quadro);
-            printf("Pessa na posicao: (%d,%d) -> satisfacao: %d", i,j, satis);
+            if (quadro[i][j] == 1)
+            {
+                satis = vizinhancas(i, j, lin, col, quadro);
+                printf("Pessa na posicao: (%d,%d) -> satisfacao: %d\n", i,j, satis);
+            }
         }
     }
     
