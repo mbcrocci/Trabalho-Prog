@@ -13,9 +13,12 @@
 #define N3 3
 #define N4 4
 #define N5 5
-#define N8 8
-#define N15 15
-#define N30 30
+
+#define MIN_LIN 8
+#define MIN_COL 15
+#define MAx_LIN 15
+#define MAX_COL 30
+
 #define N50 50
 #define N70 70
 #define N100 100
@@ -38,8 +41,8 @@ NIter		NUM_ITER: 50	Número máximo de iterações
 */
 
 //Configuracoes.c
-void Read_Config(char nomefic[N15])
-{	//ler configuaraçoes pre-defindas e presonalizadas nos ficheiros
+void Read_Config(char nomefic[N15]) //ler configuaraçoes pre-defindas e presonalizadas nos ficheiros
+{
 	Configuracoes conf, *p=&conf;
 	FILE *f, **F = &f; 
 	f = fopen(nomefic, "r");
@@ -137,7 +140,8 @@ void See_Config() //Mostrar conteudo dos 3 ficheiros de texto com as configuraço
 	} while (r == 's' || r == 'S');
 }
 
-void Save_Config(){	//guardar configurações pessoais num novo ficheiro("configpes.txt")
+void Save_Config() //guardar configurações pessoais num novo ficheiro("configpes.txt")
+{
 	Configuracoes conf, *p = &conf;
 	FILE *f, **F = &f;
 	f = fopen("configpes.txt", "w");
@@ -166,7 +170,8 @@ void Save_Config(){	//guardar configurações pessoais num novo ficheiro("configpe
 	}
 }
 
-void Obter_PersonalConfig(){
+void Obter_PersonalConfig()
+{
 	linha();
 	char c;
 	Configuracoes conf, *p = &conf;
@@ -221,7 +226,8 @@ void Obter_PersonalConfig(){
         Save_Config();
 }
 
-void Config(){
+void Config()
+{
 	int x;
 	do{
 		do{	//MenuConfig()
@@ -247,14 +253,16 @@ void Config(){
 //Simulacao.c
 
 //Menu_Principao.c
-void linha(){
+void linha()
+{
 	int i;
 	for (i = 0; i < 60; i++)
 		putchar('_');
 	puts("\n");
 }
 
-int MenuPrincipal(){
+int MenuPrincipal()
+{
 	int i;
 	linha();
 	do{
@@ -268,7 +276,8 @@ int MenuPrincipal(){
 	return i;
 }
 
-int main(){
+int main()
+{
 	int i;
 	do{
 		i = MenuPrincipal();
@@ -282,4 +291,6 @@ int main(){
 			break;
 		}
 	} while (i != 5);
+    
+    return 0;
 }

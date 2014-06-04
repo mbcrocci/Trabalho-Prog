@@ -18,15 +18,13 @@ void init_gerador_random(void)
 	srand((unsigned)time(NULL));
 }
 
-
 // Devolve um numero inteiro aleatorio entre min e max
 int numero_random(int min, int max)
 {
 	return min + rand() % (max-min+1);
 }
 
-
-int check (int x, int y, int quadro[8][15])
+int check (int x, int y, int **quadro)
 {
     if (quadro[x][y] > 0) // se a posicao tiver alguma pessa
         return 0;
@@ -34,7 +32,7 @@ int check (int x, int y, int quadro[8][15])
         return 1;
 }
 
-int vizinhancas (int x, int y, int lin, int col, int quadro[lin][col]) // E melhor por noutro ficheiro
+int vizinhancas (int x, int y, int lin, int col, int **quadro) // E melhor por noutro ficheiro
 {
     /* 
      Recebe as coordenadas (x, y) de uma posicao e o quadro mais as suas dimensoes
@@ -136,50 +134,88 @@ int vizinhancas (int x, int y, int lin, int col, int quadro[lin][col]) // E melh
     }
     return 0;
 }
-void mostrar_quadro (int lin, int col, int quadro[lin][col])
+void mostrar_quadro (int lin, int col, int **quadro)
 {
     int i, j;
     for (i = 0; i < lin; i++)
     {
         for (j = 0; j < col; j++)
-        {
             printf("| %d |", quadro[i][j]);
-        }
+            
         printf("\n");
     }
 }
+
+void preencher_quandro(int **quadro, int lin, int col, int dim_pops, int num_pops)
+{
+    int x, y, i, j, pessa;
+
+    // preencher tudo com zeros que representa sitio vazio
+    for (i = 0; i < lin; i++)
+        for (j = 0; j < col; j++)
+            (quadro[i])[j] = 0;
+
+
+    for (j = 1; j <= num_pops; j++)
+    {
+        for (i = 0; i < dim_pops; i++)
+        {
+            do 
+            {
+                x = numero_random(0, lin-1);
+                y = numero_random(0, col-1);
+            } while ((quadro[x])[y] != 0);
+            (quadro[x])[y] = j;
+        }
+    }
+}
+
 int main()
 {
     /* 
         CONFIGURCOES (esta tudo comentado para testar mais facilmente)
      */
     int i, j, satis;
-    int lin=8, col=15;
-    /*
-    while ( lin < 8 || 15 < lin || col < 15 || 30 < col) // os numeros sao os limites
-    {
-        printf("Introduza as dimesoes do ambiente: ");
-        scanf("%d %d", &lin, &col);
-    }
-    */
     
     int num_pops=2; // 2 ou 3
+    int dim_pops=40;
+
     int tipo_viz = 1; // 1 ou 2
     int fronteira = 1; // desenvolver a toroidal depois
     // satisfacao
     int tipo_desloc = 1;// pedir ao utilizador depois
     int num_iter = 10;// pedir ao utilizador depois
     
-    int quadro[lin][col];
-    init_gerador_random();
+    int lin=8, col=15;
+    /*
+     while ( lin < 8 || 15 < lin || col < 15 || 30 < col) // os numeros sao os limites
+     {
+     printf("Introduza as dimesoes do ambiente: ");
+     scanf("%d %d", &lin, &col);
+     }
+     */
     
-    // preencher o quadro (nao verifica as percentagens de pessas)
-    for (i = 0; i < lin; i++) {
-        for (j = 0; j < col; j++) {
-            quadro[i][j] = numero_random(0, 2);
+    int **quadro;
+    
+    quadro = malloc(lin * sizeof(int *));
+    if (quadro == NULL)
+    {
+        printf("Nao ha memoria para o quadro");
+        exit(0);
+    }
+    
+    for (i = 0; i < lin; i++)
+    {
+        quadro[i] = malloc(col * sizeof(int));
+        if (quadro[i] == NULL)
+        {
+            printf("Nao ha memoria para o quadro");
+            exit(1);
         }
     }
     
+    init_gerador_random();
+    preencher_quandro(quadro, lin, col, dim_pops, num_pops);
     mostrar_quadro(lin, col, quadro);
     
     // 1 iteracao do quadro
