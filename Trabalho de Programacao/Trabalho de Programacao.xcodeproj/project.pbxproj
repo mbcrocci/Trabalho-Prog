@@ -8,6 +8,10 @@
 
 /* Begin PBXFileReference section */
 		581E3AB119375C110037D04E /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		58BD987D193F181600BD848C /* config1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = config1.txt; sourceTree = "<group>"; };
+		58BD987E193F181600BD848C /* config2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = config2.txt; sourceTree = "<group>"; };
+		58BD987F193F181600BD848C /* config3.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = config3.txt; sourceTree = "<group>"; };
+		58BD9880193F181600BD848C /* Rascunho.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Rascunho.c; sourceTree = "<group>"; };
 		58D6A307193C98F300AEC82C /* random.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = random.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -16,6 +20,10 @@
 			isa = PBXGroup;
 			children = (
 				581E3AB119375C110037D04E /* main.c */,
+				58BD987D193F181600BD848C /* config1.txt */,
+				58BD987E193F181600BD848C /* config2.txt */,
+				58BD987F193F181600BD848C /* config3.txt */,
+				58BD9880193F181600BD848C /* Rascunho.c */,
 				58D6A307193C98F300AEC82C /* random.c */,
 			);
 			sourceTree = "<group>";

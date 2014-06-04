@@ -8,12 +8,23 @@
 
 
 #include <stdio.h>
-// #include "random.c" usar algumas das funcoes para gerar as posicoes da peca
+#include <stdlib.h>
+#include <time.h>
 
-struct pessa { // nao sei se vai ser preciso
-    char posicao[2];
-    int satisfeito;
-};
+// Inicializacao do gerador de numeros aleatorios
+// Deve ser chamada apenas uma vez no inicio da execucao do programa
+void init_gerador_random(void)
+{
+	srand((unsigned)time(NULL));
+}
+
+
+// Devolve um numero inteiro aleatorio entre min e max
+int numero_random(int min, int max)
+{
+	return min + rand() % (max-min+1);
+}
+
 
 int check (int x, int y, int quadro[8][15])
 {
@@ -125,15 +136,24 @@ int vizinhancas (int x, int y, int lin, int col, int quadro[lin][col]) // E melh
     }
     return 0;
 }
-
+void mostrar_quadro (int lin, int col, int quadro[lin][col])
+{
+    int i, j;
+    for (i = 0; i < lin; i++)
+    {
+        for (j = 0; j < col; j++)
+        {
+            printf("| %d |", quadro[i][j]);
+        }
+        printf("\n");
+    }
+}
 int main()
 {
     /* 
         CONFIGURCOES (esta tudo comentado para testar mais facilmente)
      */
     int i, j, satis;
-    char pass;
-    
     int lin=8, col=15;
     /*
     while ( lin < 8 || 15 < lin || col < 15 || 30 < col) // os numeros sao os limites
@@ -142,44 +162,27 @@ int main()
         scanf("%d %d", &lin, &col);
     }
     */
-
+    
+    int num_pops=2; // 2 ou 3
+    int tipo_viz = 1; // 1 ou 2
+    int fronteira = 1; // desenvolver a toroidal depois
+    // satisfacao
+    int tipo_desloc = 1;// pedir ao utilizador depois
+    int num_iter = 10;// pedir ao utilizador depois
+    
     int quadro[lin][col];
-    // encher o quadro de zeros
-    // printf("Quadro -> Continuar: "); scanf(" %[^\n]", &pass);
+    init_gerador_random();
+    
+    // preencher o quadro (nao verifica as percentagens de pessas)
     for (i = 0; i < lin; i++) {
         for (j = 0; j < col; j++) {
-            if (i == 5 && j == 7)
-                quadro[i][j] = 1;
-            
-            else
-                quadro[i][j] = 0;
+            quadro[i][j] = numero_random(0, 2);
         }
     }
     
-    int num_pops=2;
-    /*
-    printf("Introduza o numro de populacoes (2 ou 3): ");
-    scanf(" %d", &num_pops);
-    */
+    mostrar_quadro(lin, col, quadro);
     
-    int tipo_viz = 1;
-    /*
-     printf("Introduzao o tipo de vizinhaca (1 ou 2): ");
-     scanf(" %d", *tipo_viz);
-     */
-    
-    int fronteira = 1; // desenvolver a toroidal depois
-    
-    // satisfacao ...
-    
-    int tipo_desloc = 1;// pedir ao utilizador depois
-    
-    int num_iter = 10;// pedir ao utilizador depois
-    
-    
-
     // 1 iteracao do quadro
-    // printf("Vizinhanca -> Continuar: "); scanf(" %[^\n]", &pass);
     for (i = 0; i < lin; i++)
     {
         for (j = 1; j < col; j++)
@@ -191,12 +194,6 @@ int main()
             }
         }
     }
-    
-    
-    
-    
-    
-    
     
     return 0;
 }
