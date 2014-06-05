@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "random.h"
 
 // Inicializacao do gerador de numeros aleatorios
 // Deve ser chamada apenas uma vez no inicio da execucao do programa
@@ -26,28 +27,7 @@ int numero_random(int min, int max)
 
 
 // Devolve um numero real aleatorio distribuido uniformemente no intervalo [0, 1]
-double uniforme_01()
+/* double uniforme_01()
 {
 	return rand()/(double)RAND_MAX;
-}
-
-
-
-int rmain()
-{
-	int i;
-	
-	init_gerador_random();
-	
-	printf("\nValores inteiros aleatorios entre 10 e 100: ");
-	for(i=0; i<10; i++)
-		printf("%d\t", numero_random(10, 100));
-	
-	
-	printf("\n\nValores reais entre 0 e 1: ");
-	for(i=0; i<10; i++)
-		printf("%.3lf\t", uniforme_01());
-	printf("\n\n");
-	return 0;
-	
-}
+}*/

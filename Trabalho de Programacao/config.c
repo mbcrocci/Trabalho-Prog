@@ -5,6 +5,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
+#include "config.h"
 
 #define MIN_LIN 8
 #define MAX_LIN 15
@@ -15,10 +16,10 @@
 
 void linha();
 	//Header_MenuPrincipal.h
-typedef struct{	//Header_Configuracoes.h
+/* typedef struct{	//Header_Configuracoes.h
 	int DimGrid[2];
 	int NPop, DimPop, TipoViz, TipoFront, *PercSatisf, Desloc, NIter;
-}Configuracoes;
+}Configuracoes; */
 /*				EX:
 DimGrid		DIM: 8 15		Dimens„o do ambiente (Linhas, Colunas)
 NPop		POPS: 2			N˙mero de populaÁıes (X,0) ou (X, 0, H)
@@ -64,6 +65,7 @@ Configuracoes Choose_Config() //Escolher qual a configuraÁ„o a utilizar na si
 {
 	int r, falha = 0;
 	Configuracoes C;
+	char rc;
 	do{
 		linha();
 		do{
@@ -84,12 +86,14 @@ Configuracoes Choose_Config() //Escolher qual a configuraÁ„o a utilizar na si
 			
 		
 		if (falha == 1)
-			printf("\nPretende escolher outra configuracao? (s ou n): "); scanf(" %c", &r);
+		{
+			printf("\nPretende escolher outra configuracao? (s ou n): "); scanf(" %c", &rc);
+		}
 		else
-			r = 'n';
+			rc = 'n';
 
 		falha = 0;
-	} while (r == 's' || r == 'S');
+	} while (rc == 's' || rc == 'S');
 	return C;
 }
 
@@ -319,46 +323,3 @@ void simul(Configuracoes C)
 
 
 //Menu_Principao.c
-void linha()
-{
-	int i;
-	for (i = 0; i < 60; i++)
-		putchar('_');
-	puts("\n");
-}
-
-int MenuPrincipal()
-{
-	int i;
-	linha();
-	do{
-		puts("1 - Configuracoes");
-		puts("2 - Simulacao");
-		puts("3 - Guardar Informacao");
-		puts("4 - Recuperar Informacao");
-		puts("5 - Terminar");
-		printf("Escolha uma Opcao: "); scanf(" %d", &i);
-		if (i <1 || i >5)
-			puts("Erro na escolha da opcao!");
-	} while (i <1 || i >5);
-	return i;
-}
-
-int main()
-{
-	int i;
-	Configuracoes Conf;
-	do{
-		i = MenuPrincipal();
-		switch (i){
-		case 1: Conf = Config(); break;
-		case 2: Simul(Conf); break; //chamada a funÁao da simulaÁao do "quadro" (main)
-		//case 3: Save_Info(); break; //falta funÁao para guardar informaÁao da simulaÁao
-		//case 4: Recover_Info(); break; //falta funÁao para recuperar informaÁao da simulaÁao
-
-		default:
-			break;
-		}
-	} while (i != 5);
-	return 0;
-}
