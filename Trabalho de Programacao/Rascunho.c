@@ -1,234 +1,271 @@
 /*
 2 ERROS	- Nao Esta a Atribuir Valores as Variaveis da Estrutura
-		- Falta a condiÁao ao pedir a 3™ percentagem de SatisfaÁao
+		- Falta a condi√ßao ao pedir a 3¬™ percentagem de Satisfa√ßao
 */
-
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-
-#define Z 0
-#define N1 1
-#define N2 2
-#define N3 3
-#define N4 4
-#define N5 5
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
 
 #define MIN_LIN 8
+#define MAX_LIN 15
 #define MIN_COL 15
-#define MAx_LIN 15
 #define MAX_COL 30
+#define PERC_MIN 50
+#define PERC_MAX 70
 
-#define N50 50
-#define N70 70
-#define N100 100
-
-void linha();	//Header_MenuPrincipal.h
+void linha();
+	//Header_MenuPrincipal.h
 typedef struct{	//Header_Configuracoes.h
-	int DimGrid[N2];
-	int NPop, DimPop, TipoViz, TipoFront, Desloc, NIter;
-	int PercSatisf[N3];
-}Configuracoes;	//ERRO: nao esta a atribuir valores as variaveis
+	int DimGrid[2];
+	int NPop, DimPop, TipoViz, TipoFront, *PercSatisf, Desloc, NIter;
+}Configuracoes;
 /*				EX:
-DimGrid		DIM: 8 15		Dimens„o do ambiente (Linhas, Colunas)
-NPop		POPS: 2			N˙mero de populaÁıes (X,0) ou (X, 0, H)
-DimPop		DIM_POP: 40		N˙mero de agentes em cada populaÁ„o
-VTipoViz	VIZ: 1			Tipo de vizinhanÁa (1:Von Neumann; 2:Moore)
+DimGrid		DIM: 8 15		Dimens‚Äûo do ambiente (Linhas, Colunas)
+NPop		POPS: 2			NÀômero de popula√Åƒ±es (X,0) ou (X, 0, H)
+DimPop		DIM_POP: 40		NÀômero de agentes em cada popula√Å‚Äûo
+VTipoViz	VIZ: 1			Tipo de vizinhan√Åa (1:Von Neumann; 2:Moore)
 TipoFront	FRONTEIRA: 1	Tipo de fronteira (1:Fechada; 2:Toroidal)
-PercSatisf	K: 50 50		Percentagem/Limite de satisfaÁ„o para cada populaÁ„o
-Desloc		MOVE: 1			Deslocamento dos agentes (1:cÈlula mais prÛxima; 2:aleatÛrio)
-NIter		NUM_ITER: 50	N˙mero m·ximo de iteraÁıes
+PercSatisf	K: 50 50		Percentagem/Limite de satisfa√Å‚Äûo para cada popula√Å‚Äûo
+Desloc		MOVE: 1			Deslocamento dos agentes (1:c√àlula mais pr√õxima; 2:aleat√õrio)
+NIter		NUM_ITER: 50	NÀômero m¬∑ximo de itera√Åƒ±es
 */
 
 //Configuracoes.c
-void Read_Config(char nomefic[N15]) //ler configuaraÁoes pre-defindas e presonalizadas nos ficheiros
+Configuracoes Read_Config(char nomefic[15], int *erro) //ler configuara√Åoes pre-defindas e presonalizadas nos ficheiros
 {
-	Configuracoes conf, *p=&conf;
-	FILE *f, **F = &f; 
+	Configuracoes C;
+	FILE *f;
 	f = fopen(nomefic, "r");
-    
-	if (f == NULL)
-    {
-        puts("Erro no acesso ao ficheiro!");
-        return;
-    }
-    
-	else
-    {
-		fscanf(f, " %d %d", &(p->DimGrid[Z]), &(p->DimGrid[N1]));
-		fscanf(f, " %d", &(p->NPop));
-		fscanf(f, " %d", &(p->DimPop));
-		fscanf(f, " %d", &(p->TipoViz));
-		fscanf(f, " %d", &(p->TipoFront));
-		if (p->NPop == 2)
-            fscanf(f, " %d %d", &(p->PercSatisf[Z]), &(p->PercSatisf[N1]));
-		else
-            fscanf(f, " %d %d %d", &(p->PercSatisf[Z]), &(p->PercSatisf[N1]),&(p->PercSatisf[N2]));
-        
-		fscanf(f, " %d", &(p->Desloc));
-		fscanf(f, " %d", &(p->NIter));
+	if (f!= NULL){
+		fscanf(f, " DIM: %d %d", &(C.DimGrid[0]), &(C.DimGrid[1]));//[^DIM:]
+		fscanf(f, " POPS: %d", &(C.NPop));//[^POPS:]
+		fscanf(f, " DIM_POP: %d", &(C.DimPop));
+		fscanf(f, " VIZ: %d", &(C.TipoViz));
+		fscanf(f, " FRONTEIRA: %d", &(C.TipoFront));
+		C.PercSatisf = malloc(sizeof(int)*C.NPop);	//Se Numero de Popula√Åoes for 2 entao existem 2 percentagens de satisfa√Åao
+		if (C.NPop == 2)
+			fscanf(f, " K: %d %d", &(C.PercSatisf[0]), &(C.PercSatisf[1]));
+
+		else //Se nao... entao existem 3 percentagens de satisfa√Åao
+			fscanf(f, " K: %d %d %d", &(C.PercSatisf[0]), &(C.PercSatisf[1]), &(C.PercSatisf[2]));
+
+		fscanf(f, " MOVE: %d", &(C.Desloc));
+		fscanf(f, " NUM_ITER: %d", &(C.NIter));
 		fclose(f);
 	}
+	else{
+		puts("Erro no acesso ao ficheiro!");
+		*erro = 1;
+	}
+	return C;
 }
 
-void Choose_Config()
-{	//Escolher qual a configuraÁ„o a utilizar na simulaÁ„o
-	int c;
-	linha();
-	do{
-		printf("Qual e a configuracao que quer utilizar? (1,2,3 ou 4[Configuracao pessoal]): "); scanf(" %d", &c);
-	} while (c<1 || 4<c);
-    
-	if (c == 1)
-        Read_Config("config1.txt");
-    
-	else if (c == 2)
-        Read_Config("config2.txt");
-    
-    else if (c == 3)
-        Read_Config("config3.txt");
-			
-    else
-        Read_Config("configpes.txt");
-		
-}
-
-void See_Config() //Mostrar conteudo dos 3 ficheiros de texto com as configuraÁoes pre-definidas
+Configuracoes Choose_Config() //Escolher qual a configura√Å‚Äûo a utilizar na simula√Å‚Äûo 
 {
-    int c; char r;
-	Configuracoes conf, *p = &conf;
-	linha();
+	int r, falha = 0;
+	Configuracoes C;
 	do{
+		linha();
 		do{
-			printf("Qual e a configuracao que quer visualizar? (1,2,3 ou 4[Configuracao pessoal]): "); scanf(" %d", &c);
-		} while (c < 1 || 4 < c);
-        
-		if (c == 1)
-        {
-            Read_Config("config1.txt");
-            puts("Configuracao 1:");
-        }
-		else if (c == 2)
-        {
-            Read_Config("config2.txt");
-            puts("Configuracao 2:");
-        }
-        else if (c == 3)
-        {
-            Read_Config("config3.txt");
-            puts("Configuracao 3:");
-        }
-        else
-        {
-            Read_Config("configpes.txt");
-            puts("Configuracao Pessoal:");
-		}
-        
-		printf("DIM: %d %d\n", p->DimGrid[Z], p->DimGrid[N1]);
-		printf("POPS: %d\n", p->NPop);
-		printf("DIM_POP: %d\n", p->DimPop);
-		printf("VIZ: %d\n", p->TipoViz);
-		printf("FRONTEIRA: %d\n", p->TipoFront);
-		if (p->NPop == 2)
-            printf("K: %d %d\n", p->PercSatisf[Z], p->PercSatisf[N1]);
+			printf("Qual e a configuracao que quer utilizar? [1, 2, 3 ou 4(Config. pessoal)]: "); scanf(" %d", &r);
+		} while (r<1 || r>4);
+
+		if (r == 1)
+			C = Read_Config("config1.txt", &falha);
+
+		else if (r == 2)
+			C = Read_Config("config2.txt", &falha);
+		
+		else if (r == 3)
+			C = Read_Config("config3.txt", &falha);
+
+		else 
+			C = Read_Config("configpes.txt", &falha);
+			
+		
+		if (falha == 1)
+			printf("\nPretende escolher outra configuracao? (s ou n): "); scanf(" %c", &r);
 		else
-            printf("K: %d %d %d\n", p->PercSatisf[Z], p->PercSatisf[N1], p->PercSatisf[N2]);
-        
-		printf("MOVE: %d\n", p->Desloc);
-		printf("NUM_ITER: %d\n", p->NIter);
+			r = 'n';
+
+		falha = 0;
+	} while (r == 's' || r == 'S');
+	return C;
+}
+
+void See_Config(Configuracoes C) //Mostrar conteudo dos 3 ficheiros de texto com as configura√Åoes pre-definidas
+{
+	int v, falha = 0;
+	char r;
+	do{
+		linha();
+		do{
+			printf("Qual e a configuracao que quer visualizar? [1, 2, 3 ou 4(Config. pessoal)]: "); scanf(" %d", &v);
+		} while (v < 1 || v > 4);
+		if (v == 1)
+		{ 
+			C = Read_Config("config1.txt", &falha); 
+			if (falha != 1)
+				puts("\nConfiguracao 1:");
+		}
+		else if (v == 2)
+		{ 
+			C = Read_Config("config2.txt", &falha); 
+			if (falha != 1)
+				puts("\nConfiguracao 2:");
+		}
+		else if (v == 3)
+		{ 
+			C = Read_Config("config3.txt", &falha); 
+			if (falha != 1)
+				puts("\nConfiguracao 3:");
+		}
+		else
+		{ 
+			C = Read_Config("configpes.txt", &falha); 
+			if (falha != 1)
+				puts("\nConfiguracao Pessoal:");		
+		}
+
+		if (falha!=1)
+		{
+			printf("DIM: %d %d\n", C.DimGrid[0], C.DimGrid[1]);
+			printf("POPS: %d\n", C.NPop);
+			printf("DIM_POP: %d\n", C.DimPop);
+			printf("VIZ: %d\n", C.TipoViz);
+			printf("FRONTEIRA: %d\n", C.TipoFront);
+			if (C.NPop == 2) 
+				printf("K: %d %d\n", C.PercSatisf[0], C.PercSatisf[1]);
+			else 
+				printf("K: %d %d %d\n", C.PercSatisf[0], C.PercSatisf[1], C.PercSatisf[2]);
+
+			printf("MOVE: %d\n", C.Desloc);
+			printf("NUM_ITER: %d\n", C.NIter);
+		}
+		falha = 0;
 		printf("\nPretende visualizar mais alguma configuracao? (s ou n): "); scanf(" %c", &r);
 	} while (r == 's' || r == 'S');
 }
 
-void Save_Config() //guardar configuraÁıes pessoais num novo ficheiro("configpes.txt")
+void Save_Config(Configuracoes C) //guardar configura√Åƒ±es pessoais num novo ficheiro("configpes.txt")
 {
-	Configuracoes conf, *p = &conf;
-	FILE *f, **F = &f;
-	f = fopen("configpes.txt", "w");
-	if (f == NULL)
-    {
-        puts("Erro no acesso ao ficheiro!");
-        return;
-    }
-    
+	FILE *f;
+	if ((f = fopen("configpes.txt", "w")) == NULL)
+	{ 
+		puts("Erro no acesso ao ficheiro!"); 
+		return; 
+	}
 	else
-    {
-		fprintf(f, "DIM: %d %d\n", p->DimGrid[Z], p->DimGrid[N1]);
-		fprintf(f, "POPS: %d\n", p->NPop);
-		fprintf(f, "DIM_POP: %d\n", p->DimPop);
-		fprintf(f, "VIZ: %d\n", p->TipoViz);
-		fprintf(f, "FRONTEIRA: %d\n", p->TipoFront);
-        
-		if (p->NPop == 2)
-            fprintf(f, "K: %d %d\n", p->PercSatisf[Z], p->PercSatisf[N1]);
-		else
-            fprintf(f, "K: %d %d %d\n", p->PercSatisf[Z], p->PercSatisf[N1], p->PercSatisf[N2]);
-        
-		fprintf(f, "MOVE: %d\n", p->Desloc);
-		fprintf(f, "NUM_ITER: %d\n", p->NIter);
+	{
+		fprintf(f, "DIM: %d %d\n", C.DimGrid[0], C.DimGrid[1]);
+		fprintf(f, "POPS: %d\n", C.NPop);
+		fprintf(f, "DIM_POP: %d\n", C.DimPop);
+		fprintf(f, "VIZ: %d\n", C.TipoViz);
+		fprintf(f, "FRONTEIRA: %d\n", C.TipoFront);
+		if (C.NPop == 2) 
+			fprintf(f, "K: %d %d\n", C.PercSatisf[0], C.PercSatisf[1]);
+		else 
+			fprintf(f, "K: %d %d %d\n", C.PercSatisf[0], C.PercSatisf[1], C.PercSatisf[2]);
+
+		fprintf(f, "MOVE: %d\n", C.Desloc);
+		fprintf(f, "NUM_ITER: %d\n", C.NIter);
 		fclose(f);
 	}
 }
 
-void Obter_PersonalConfig()
+Configuracoes Obter_PersonalConfig()
 {
 	linha();
-	char c;
-	Configuracoes conf, *p = &conf;
-	//pedir dados das configuraÁıes e preencher estrutura
+	char r;
+	Configuracoes C;
+	//pedir dados das configura√Åƒ±es e preencher estrutura
+	do{
+		printf("Dimensao do ambiente (Numero_Linhas Numero_Colunas): "); 
+		scanf(" %d %d", &(C.DimGrid[0]), &(C.DimGrid[1]));
+	} while ((C.DimGrid[0]<MIN_LIN || C.DimGrid[0]>MAX_LIN) 
+		|| (C.DimGrid[1]<MIN_COL || C.DimGrid[1]>MAX_COL));
 
 	do{
-		printf("Dimensao do ambiente (Numero_Linhas Numero_Colunas): "); scanf(" %d %d", &(p->DimGrid[Z]), &(p->DimGrid[N1]));
-	} while ((p->DimGrid[Z]<N8 || p->DimGrid[Z]>N15) || (p->DimGrid[N1]<N15 || p->DimGrid[N1]>N30));
-    
-	do{
-		printf("Numero de populacoes (2 -(X,0) ou 3 -(X, 0, H)): "); scanf(" %d", &(p->NPop));
-	} while (p->NPop<N2 || p->NPop>N3);
-    
-	do{
-		printf("Numero de agentes em cada populacao: "); scanf(" %d", &(p->DimPop));	//Deve garantir-se que a percentagem total de cÈlulas ocupadas varia entre 50 % e 70 % do total;
-	} while ((p->NPop*p->DimPop*N100) / (p->DimGrid[Z] * p->DimGrid[N1])<N50 || (p->NPop*p->DimPop*N100) / (p->DimGrid[Z] * p->DimGrid[N1])>N70);
-	//	(p->NPop * p->DimPop * N100) / (p->DimGrid[Z] * p->DimGrid[N1]) => calcula a percentagem total de cÈlulas ocupadas
-    
-	do{
-		printf("Tipo de vizinhanca (1:Von Neumann; 2:Moore): "); scanf(" %d", &(p->TipoViz));
-	} while (p->TipoViz<N1 || p->TipoViz>N2);
-    
-	do{
-		printf("Tipo de Fronteira (1:Fechada; 2:Toroidal): "); scanf(" %d", &(p->TipoFront));
-	} while (p->TipoFront<N1 || p->TipoFront>N2);
-    
-	do{
-		printf("Percentagem de satisfacao para cada populacao: ");
-		//Pode existir uma ˙nica percentagem para todas as populaÁıes ou uma percentagem especÌfica para cada tipo de agente;
-		if (p->NPop == 2)
-            scanf(" %d %d", &(p->PercSatisf[Z]), &(p->PercSatisf[N1]));
-		else
-            scanf(" %d %d %d", &(p->PercSatisf[Z]), &(p->PercSatisf[N1]), &(p->PercSatisf[N2]));
-	} while ((p->PercSatisf[Z]<N1 || p->PercSatisf[Z]>N100) || (p->PercSatisf[N1]<N1 || p->PercSatisf[N1]>N100));//as percentagens tem de ser MAIORES que 1% e MENORES que 100%
-	//	=> FALTA A CONDI«AO DA 3™ PERCETAGEM	<=
+		printf("Numero de populacoes (2 -(X,0) ou 3 -(X, 0, H)): "); 
+		scanf(" %d", &(C.NPop));
+	} while (C.NPop<2 || C.NPop>3);
 
 	do{
-		printf("Deslocamento dos agentes (1:celula mais proxima; 2:aleatorio): "); scanf(" %d", &(p->Desloc));
-	} while (p->TipoViz<N1 || p->TipoViz>N2);
-    
-	do{
-		printf("Numero maximo de iteracoes: "); scanf(" %d", &(p->NIter));
-	} while (p->NIter < N1);
+		printf("Numero de agentes em cada populacao: "); 
+		scanf(" %d", &(C.DimPop));	//Deve garantir-se que a percentagem total de c√àlulas ocupadas varia entre 50 % e 70 % do total;
+	} while ((C.NPop*C.DimPop*100) / (C.DimGrid[0] * C.DimGrid[1])<PERC_MIN
+		|| (C.NPop*C.DimPop*100) / (C.DimGrid[0] * C.DimGrid[1])>PERC_MAX);
+	//	(p->NPop * p->DimPop * N100) / (p->DimGrid[Z] * p->DimGrid[N1]) => calcula a percentagem total de c√àlulas ocupadas 
 
-	//guardar configuraÁıes
+	do{
+		printf("Tipo de vizinhanca (1:Von Neumann; 2:Moore): "); 
+		scanf(" %d", &(C.TipoViz));
+	} while (C.TipoViz<1 || C.TipoViz>2);
+
+	do{
+		printf("Tipo de Fronteira (1:Fechada; 2:Toroidal): "); 
+		scanf(" %d", &(C.TipoFront));
+	} while (C.TipoFront<1 || C.TipoFront>2);
+
+	//Pode existir uma Àônica percentagem para todas as popula√Åƒ±es ou uma percentagem espec√åfica para cada tipo de agente;
+	C.PercSatisf = malloc(sizeof(int)*C.NPop);	
+	//as percentagens tem de ser MAIORES que 1% e MENORES que 100%
+	if (C.NPop == 2) //Se Numero de Popula√Åoes for 2 entao existem 2 percentagens de satisfa√Åao
+	{
+		do{
+			printf("Percentagem de satisfacao para cada populacao: ");
+			scanf(" %d %d", &(C.PercSatisf[0]), &(C.PercSatisf[1]));
+		} while ((C.PercSatisf[0]<1 || C.PercSatisf[0]>100)
+			|| (C.PercSatisf[1]<1 || C.PercSatisf[1]>100));
+	}
+	else //Se nao... entao existem 3 percentagens de satisfa√Åao
+	{
+		do{
+			printf("Percentagem de satisfacao para cada populacao: ");
+			scanf(" %d %d %d", &(C.PercSatisf[0]), &(C.PercSatisf[1]), &(C.PercSatisf[2]));
+		} while ((C.PercSatisf[0]<1 || C.PercSatisf[0]>100)
+			|| (C.PercSatisf[1]<1 || C.PercSatisf[1]>100)
+			||(C.PercSatisf[2]<1||C.PercSatisf[2]>100));
+	}
+	do{
+		printf("Deslocamento dos agentes (1:celula mais proxima; 2:aleatorio): "); 
+		scanf(" %d", &(C.Desloc));
+	} while (C.TipoViz<1 || C.TipoViz>2);
+
+	do{
+		printf("Numero maximo de iteracoes: "); 
+		scanf(" %d", &(C.NIter));
+	} while (C.NIter < 1);
+
+	//guardar configura√Åƒ±es
 	linha();
-	do{
-		printf("\nPretende guardar estas configuracoes para utilizacao frequente? (s ou n): "); scanf(" %c", &c);
-	} while ((c != 's' && c != 'S') && (c != 'n' && c != 'N'));
-    
-	if (c == 's' || c == 'S')
-        Save_Config();
+	printf("\nPretende guardar estas configuracoes para utilizacao frequente? (s ou n): "); scanf(" %c", &r);
+	if (r == 's' || r == 'S') 
+		Save_Config(C);
+	return C;
 }
 
-void Config()
+Configuracoes inicializ()
+{
+	Configuracoes c;
+	c.DimGrid[0] = 0;
+	c.DimGrid[1] = 0;
+	c.NPop = 0;
+	c.DimPop = 0;
+	c.TipoViz = 0;
+	c.TipoFront = 0;
+	c.PercSatisf = malloc(sizeof(int));
+	c.PercSatisf[0] = 0;
+	c.PercSatisf[1] = 0;
+	c.Desloc = 0;
+	c.NIter = 0;
+	return c;
+}
+
+Configuracoes Config()
 {
 	int x;
+	Configuracoes C = inicializ();
 	do{
 		do{	//MenuConfig()
 			linha();
@@ -236,21 +273,50 @@ void Config()
 			puts("2 - Visualizar Configuracoes Pre-definidas");
 			puts("3 - Personalizar Configuracoes");
 			puts("4 - Voltar Atras");
-			printf("Escolha uma Opcao: "); scanf(" %d", &x); if (x <N1 || x >N4) puts("Erro na escolha da opcao!");
-		} while (x <N1 || x >N4);
+			printf("Escolha uma Opcao: "); scanf(" %d", &x); 
+			if (x <1 || x >4)
+				puts("Erro na escolha da opcao!");
+		} while (x <1 || x >4);
 
 		switch (x)
 		{
-		case 1: Choose_Config(); break;
-		case 2: See_Config(); break;
-		case 3: Obter_PersonalConfig(); break;
+		case 1: C = Choose_Config(); break;
+		case 2: See_Config(C); break;
+		case 3: C = Obter_PersonalConfig(); break;
 		default:
 			break;
 		}
-	} while (x != N4);
+	} while (x != 4);
+	return C;
 }
 
-//Simulacao.c
+
+
+
+
+//Simulacao.c	
+void simul(Configuracoes C)
+{
+	int erro = 0;
+	char resp;
+	// Configura√Åƒ±es STANDARD (se ainda nao tiver sido escolhido uma configura√Å‚Äûo)
+	C = Read_Config("config1.txt", &erro);
+	if (erro == 1)
+	{
+		puts("\nErro ao definir configuracoes standard!");
+		printf("Quer definir outras configura√Åoes? (s, n): ");
+		scanf(" %c", &resp);
+		if (resp == 's' || resp == 'S')
+			Config();
+	}
+	else 
+		return;
+	
+//=>CONTINUAR
+}
+
+
+
 
 //Menu_Principao.c
 void linha()
@@ -271,26 +337,28 @@ int MenuPrincipal()
 		puts("3 - Guardar Informacao");
 		puts("4 - Recuperar Informacao");
 		puts("5 - Terminar");
-		printf("Escolha uma Opcao: "); scanf(" %d", &i); if (i <N1 || i >N5) puts("Erro na escolha da opcao!");
-	} while (i <N1 || i >N5);
+		printf("Escolha uma Opcao: "); scanf(" %d", &i);
+		if (i <1 || i >5)
+			puts("Erro na escolha da opcao!");
+	} while (i <1 || i >5);
 	return i;
 }
 
 int main()
 {
 	int i;
+	Configuracoes Conf;
 	do{
 		i = MenuPrincipal();
 		switch (i){
-		case 1: Config(); break;
-		//case 2: break; //chamada a funÁao da simulaÁao do "quadro"
-		//case 3: Save_Info(); break; //falta funÁao para guardar informaÁao da simulaÁao
-		//case 4: Recover_Info(); break; //falta funÁao para recuperar informaÁao da simulaÁao
+		case 1: Conf = Config(); break;
+		case 2: Simul(Conf); break; //chamada a fun√Åao da simula√Åao do "quadro" (main)
+		//case 3: Save_Info(); break; //falta fun√Åao para guardar informa√Åao da simula√Åao
+		//case 4: Recover_Info(); break; //falta fun√Åao para recuperar informa√Åao da simula√Åao
 
 		default:
 			break;
 		}
 	} while (i != 5);
-    
-    return 0;
+	return 0;
 }
