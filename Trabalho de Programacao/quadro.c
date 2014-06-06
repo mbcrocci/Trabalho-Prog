@@ -1,20 +1,5 @@
-// Inicializacao do gerador de numeros aleatorios
-// Deve ser chamada apenas uma vez no inicio da execucao do programa
-/*
-#include <stdlib.h>
-#include <time.h>
-void init_gerador_random(void)
-{
-    srand((unsigned)time(NULL));
-}
-
-// Devolve um numero inteiro aleatorio entre min e max
-int numero_random(int min, int max)
-{
-    return min + rand() % (max-min+1);
-} */
-
 #include <stdio.h>
+#include <stdlib.h>
 #include "quadro.h"
 #include "random.h"
 
@@ -159,8 +144,32 @@ void preencher_quandro(int **quadro, int lin, int col, int dim_pops, int num_pop
             {
                 x = numero_random(0, lin-1);
                 y = numero_random(0, col-1);
+                printf("%d, %d", x, y);
             } while ((quadro[x])[y] != 0);
             (quadro[x])[y] = j;
+            printf("%d, %d", x, y);
+        }
+    }
+}
+
+void criar_quadro(int **quadro, int lin, int col)
+{
+    int i;
+
+    quadro = malloc(lin * sizeof(int *));
+    if (quadro == NULL)
+    {
+        printf("Nao ha memoria para o quadro");
+        exit(0);
+    }
+    
+    for (i = 0; i < lin; i++)
+    {
+        quadro[i] = malloc(col * sizeof(int));
+        if (quadro[i] == NULL)
+        {
+            printf("Nao ha memoria para o quadro");
+            exit(1);
         }
     }
 }

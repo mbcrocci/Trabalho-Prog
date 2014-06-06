@@ -1,37 +1,18 @@
-/*
-2 ERROS	- Nao Esta a Atribuir Valores as Variaveis da Estrutura
-		- Falta a condiçao ao pedir a 3ª percentagem de Satisfaçao
-*/
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include "config.h"
 
-#define MIN_LIN 8
-#define MAX_LIN 15
-#define MIN_COL 15
-#define MAX_COL 30
-#define PERC_MIN 50
-#define PERC_MAX 70
 
-void linha();
-	//Header_MenuPrincipal.h
-/* typedef struct{	//Header_Configuracoes.h
-	int DimGrid[2];
-	int NPop, DimPop, TipoViz, TipoFront, *PercSatisf, Desloc, NIter;
-}Configuracoes; */
-/*				EX:
-DimGrid		DIM: 8 15		Dimens„o do ambiente (Linhas, Colunas)
-NPop		POPS: 2			N˙mero de populaÁıes (X,0) ou (X, 0, H)
-DimPop		DIM_POP: 40		N˙mero de agentes em cada populaÁ„o
-VTipoViz	VIZ: 1			Tipo de vizinhanÁa (1:Von Neumann; 2:Moore)
-TipoFront	FRONTEIRA: 1	Tipo de fronteira (1:Fechada; 2:Toroidal)
-PercSatisf	K: 50 50		Percentagem/Limite de satisfaÁ„o para cada populaÁ„o
-Desloc		MOVE: 1			Deslocamento dos agentes (1:cÈlula mais prÛxima; 2:aleatÛrio)
-NIter		NUM_ITER: 50	N˙mero m·ximo de iteraÁıes
-*/
 
-//Configuracoes.c
+void linha()
+{
+    int i;
+    for (i = 0; i < 60; i++)
+        putchar('_');
+    puts("\n");
+}
+
 Configuracoes Read_Config(char nomefic[15], int *erro) //ler configuaraÁoes pre-defindas e presonalizadas nos ficheiros
 {
 	Configuracoes C;
@@ -293,33 +274,3 @@ Configuracoes Config()
 	} while (x != 4);
 	return C;
 }
-
-
-
-
-
-//Simulacao.c	
-void simul(Configuracoes C)
-{
-	int erro = 0;
-	char resp;
-	// ConfiguraÁıes STANDARD (se ainda nao tiver sido escolhido uma configuraÁ„o)
-	C = Read_Config("config1.txt", &erro);
-	if (erro == 1)
-	{
-		puts("\nErro ao definir configuracoes standard!");
-		printf("Quer definir outras configuraÁoes? (s, n): ");
-		scanf(" %c", &resp);
-		if (resp == 's' || resp == 'S')
-			Config();
-	}
-	else 
-		return;
-	
-//=>CONTINUAR
-}
-
-
-
-
-//Menu_Principao.c
