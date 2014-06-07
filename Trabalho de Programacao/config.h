@@ -26,19 +26,13 @@ NIter		NUM_ITER: 50	N˙mero m·ximo de iteraÁıes
 */
 
 void linha();
-
 Configuracoes Read_Config(char nomefic[15], int *erro);
-
 Configuracoes Choose_Config();
-
 void See_Config(Configuracoes C);
-
 void Save_Config(Configuracoes C);
-
 Configuracoes Obter_PersonalConfig();
-
 Configuracoes inicializ();
-
-Configuracoes Config();
+int MenuConfig();
+Configuracoes config();
 
 #endif
