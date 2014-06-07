@@ -11,7 +11,8 @@
 
 typedef struct{	
 	int DimGrid[2];
-	int NPop, DimPop, TipoViz, TipoFront, *PercSatisf, Desloc, NIter;
+	int NPop, DimPop, TipoViz, TipoFront, Desloc, NIter;
+	float *PercSatisf;
 } Configuracoes;
 /*				EX:
 DimGrid		DIM: 8 15		Dimens„o do ambiente (Linhas, Colunas)

@@ -24,12 +24,12 @@ Configuracoes Read_Config(char nomefic[15], int *erro) //ler configuaraÁoes pre
 		fscanf(f, " DIM_POP: %d", &(C.DimPop));
 		fscanf(f, " VIZ: %d", &(C.TipoViz));
 		fscanf(f, " FRONTEIRA: %d", &(C.TipoFront));
-		C.PercSatisf = malloc(sizeof(int)*C.NPop);	//Se Numero de PopulaÁoes for 2 entao existem 2 percentagens de satisfaÁao
+		C.PercSatisf = malloc(sizeof(float)*C.NPop);	//Se Numero de PopulaÁoes for 2 entao existem 2 percentagens de satisfaÁao
 		if (C.NPop == 2)
-			fscanf(f, " K: %d %d", &(C.PercSatisf[0]), &(C.PercSatisf[1]));
+			fscanf(f, " K: %f %f", &(C.PercSatisf[0]), &(C.PercSatisf[1]));
 
-		else //Se nao... entao existem 3 percentagens de satisfaÁao
-			fscanf(f, " K: %d %d %d", &(C.PercSatisf[0]), &(C.PercSatisf[1]), &(C.PercSatisf[2]));
+		else //Se nao... entao existem 3 percentagens fe satisfaÁao
+			fscanf(f, " K: %f %f %f", &(C.PercSatisf[0]), &(C.PercSatisf[1]), &(C.PercSatisf[2]));
 
 		fscanf(f, " MOVE: %d", &(C.Desloc));
 		fscanf(f, " NUM_ITER: %d", &(C.NIter));
@@ -120,9 +120,9 @@ void See_Config(Configuracoes C) //Mostrar conteudo dos 3 ficheiros de texto com
 			printf("VIZ: %d\n", C.TipoViz);
 			printf("FRONTEIRA: %d\n", C.TipoFront);
 			if (C.NPop == 2) 
-				printf("K: %d %d\n", C.PercSatisf[0], C.PercSatisf[1]);
+				printf("K: %f %f\n", C.PercSatisf[0], C.PercSatisf[1]);
 			else 
-				printf("K: %d %d %d\n", C.PercSatisf[0], C.PercSatisf[1], C.PercSatisf[2]);
+				printf("K: %f %f %f\n", C.PercSatisf[0], C.PercSatisf[1], C.PercSatisf[2]);
 
 			printf("MOVE: %d\n", C.Desloc);
 			printf("NUM_ITER: %d\n", C.NIter);
@@ -148,9 +148,9 @@ void Save_Config(Configuracoes C) //guardar configuraÁıes pessoais num novo fi
 		fprintf(f, "VIZ: %d\n", C.TipoViz);
 		fprintf(f, "FRONTEIRA: %d\n", C.TipoFront);
 		if (C.NPop == 2) 
-			fprintf(f, "K: %d %d\n", C.PercSatisf[0], C.PercSatisf[1]);
+			fprintf(f, "K: %f %f\n", C.PercSatisf[0], C.PercSatisf[1]);
 		else 
-			fprintf(f, "K: %d %d %d\n", C.PercSatisf[0], C.PercSatisf[1], C.PercSatisf[2]);
+			fprintf(f, "K: %f %f %f\n", C.PercSatisf[0], C.PercSatisf[1], C.PercSatisf[2]);
 
 		fprintf(f, "MOVE: %d\n", C.Desloc);
 		fprintf(f, "NUM_ITER: %d\n", C.NIter);
@@ -193,13 +193,13 @@ Configuracoes Obter_PersonalConfig()
 	} while (C.TipoFront<1 || C.TipoFront>2);
 
 	//Pode existir uma ˙nica percentagem para todas as populaÁıes ou uma percentagem especÌfica para cada tipo de agente;
-	C.PercSatisf = malloc(sizeof(int)*C.NPop);	
+	C.PercSatisf = malloc(sizeof(float)*C.NPop);	
 	//as percentagens tem de ser MAIORES que 1% e MENORES que 100%
 	if (C.NPop == 2) //Se Numero de PopulaÁoes for 2 entao existem 2 percentagens de satisfaÁao
 	{
 		do{
 			printf("Percentagem de satisfacao para cada populacao: ");
-			scanf(" %d %d", &(C.PercSatisf[0]), &(C.PercSatisf[1]));
+			scanf(" %f %f", &(C.PercSatisf[0]), &(C.PercSatisf[1]));
 		} while ((C.PercSatisf[0]<1 || C.PercSatisf[0]>100)
 			|| (C.PercSatisf[1]<1 || C.PercSatisf[1]>100));
 	}
@@ -207,7 +207,7 @@ Configuracoes Obter_PersonalConfig()
 	{
 		do{
 			printf("Percentagem de satisfacao para cada populacao: ");
-			scanf(" %d %d %d", &(C.PercSatisf[0]), &(C.PercSatisf[1]), &(C.PercSatisf[2]));
+			scanf(" %f %f %f", &(C.PercSatisf[0]), &(C.PercSatisf[1]), &(C.PercSatisf[2]));
 		} while ((C.PercSatisf[0]<1 || C.PercSatisf[0]>100)
 			|| (C.PercSatisf[1]<1 || C.PercSatisf[1]>100)
 			||(C.PercSatisf[2]<1||C.PercSatisf[2]>100));
@@ -239,7 +239,7 @@ Configuracoes inicializ()
 	c.DimPop = 0;
 	c.TipoViz = 0;
 	c.TipoFront = 0;
-	c.PercSatisf = malloc(sizeof(int));
+	c.PercSatisf = malloc(sizeof(float));
 	c.PercSatisf[0] = 0;
 	c.PercSatisf[1] = 0;
 	c.Desloc = 0;
