@@ -13,6 +13,7 @@ void mostrar_quadro (int lin, int col, int **quadro)
             
         printf("\n");
     }
+    puts("\n");
 }
 
 void preencher_quandro(int lin, int col, int dim_pops, int num_pops, int **quadro)

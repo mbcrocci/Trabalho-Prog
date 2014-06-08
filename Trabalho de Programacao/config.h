@@ -33,6 +33,6 @@ void Save_Config(Configuracoes C);
 Configuracoes Obter_PersonalConfig();
 Configuracoes inicializ();
 int MenuConfig();
-Configuracoes config();
+Configuracoes config(int *PrimVez);
 
 #endif

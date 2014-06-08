@@ -1,8 +1,9 @@
 #include "viz.h"
+#include <stdio.h>
 
 int check (int x, int y, int **quadro, int p)
 {
-    if ((quadro[x])[y] == p) // se a posicao tiver alguma peca
+    if ((quadro[x])[y] == p || (quadro[x])[y] == 0) // se a posicao tiver alguma peca
         return 1;
     else
         return 0;
