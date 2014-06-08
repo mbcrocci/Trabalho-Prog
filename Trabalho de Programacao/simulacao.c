@@ -1,4 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
+//#include <omp.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -51,14 +52,14 @@ void simul(Configuracoes C, int *PrimVez){
 	}
 
 	// Criar quadro com base nas configs
-    quadro = malloc(C.DimGrid[0] * sizeof(int *));
+    quadro = malloc(C.DimGrid[1] * sizeof(int *));
     if (quadro == NULL)
     {
         printf("Nao ha memoria para o quadro");
         exit(0);
     }
     printf("Array de ponteiros criado\n" ); // remover linha
-    for (i = 0; i < C.DimGrid[0]; i++)
+    for (i = 0; i < C.DimGrid[1]; i++)
     {
         quadro[i] = malloc(C.DimGrid[1] * sizeof(int));
         if (quadro[i] == NULL)
@@ -85,10 +86,11 @@ void simul(Configuracoes C, int *PrimVez){
         }
     }
 
-    for (iter = 0; iter < C.NIter; iter ++) // iteracoes especificadas na configuracao
+    for (iter = 0; iter < C.NIter; iter++) // iteracoes especificadas na configuracao
     {
         mostrar_quadro(C.DimGrid[0], C.DimGrid[1], quadro);
 
+        // #pragma omp parallel for
         for (i = 0; i < C.DimGrid[0]; i++)
         {
             for (j = 0; j < C.DimGrid[1]; j++)
@@ -97,7 +99,7 @@ void simul(Configuracoes C, int *PrimVez){
                 {
                     p = (quadro[i])[j];
                     if (C.TipoViz == 1 && C.TipoFront == 1)
-                        satis = viz_neuman_fech(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_neuman_fech(i, j, C.DimGrid[0]-1, C.DimGrid[1]-1, C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 1 && C.TipoFront == 2)
                         satis = viz_neuman_tor(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
@@ -108,9 +110,9 @@ void simul(Configuracoes C, int *PrimVez){
                     else if (C.TipoViz == 2 && C.TipoFront == 2)
                         satis = viz_moore_tor(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
 
-                    printf("Pessa na posicao: (%d,%d) -> satisfacao: %d\n", i,j, satis);
+                    printf("Peca na posicao: (%d,%d) -> satisfacao: %d\n", i,j, satis);
 
-                    if (satis == 0) // nao estiver satisfeito
+                    /*if (satis == 0) // nao estiver satisfeito
                     {
                         (quadro[i])[j] = 0;
                         if (C.Desloc == 1)
@@ -126,7 +128,7 @@ void simul(Configuracoes C, int *PrimVez){
                             } while ((quadro[x])[y] != 0);
                             (quadro[x])[y] = p;
                         }
-                    }
+                    }*/
                 }
             }
             espera(1);

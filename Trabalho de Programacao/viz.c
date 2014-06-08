@@ -12,6 +12,7 @@ int check (int x, int y, int **quadro, int p)
 int viz_neuman_fech (int x, int y, int lin, int col, float per, int **quadro)
 {
     int p = (quadro[x])[y]; // peca
+    printf("Peca : %d : ", p);
 
     if (y == 0) // primeira linha
     {
