@@ -116,9 +116,6 @@ void simul(Configuracoes C, int PrimVez){
     {
         for (i = 0; i < C.DimPop; i++)
         {
-            quadro[0][0] = 4; /// retirar estas linhas depois
-            quadro[0][1] = 6;
-            quadro[1][0] = 5;
             do {
                 y = numero_random(0, nlin-1);
                 x = numero_random(0, ncol-1);
@@ -127,7 +124,7 @@ void simul(Configuracoes C, int PrimVez){
         }
     }
 
-    for (iter = 0; iter < 2/*C.NIter*/; iter++) // iteracoes especificadas na configuracao
+    for (iter = 0; iter < C.NIter; iter++) // iteracoes especificadas na configuracao
     {
         mostrar_quadro(nlin, ncol, quadro);
 
@@ -150,7 +147,7 @@ void simul(Configuracoes C, int PrimVez){
                     else if (C.TipoViz == 2 && C.TipoFront == 2)
                         satis = viz_moore_tor(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
 
-                    printf("Peca %d na posicao: (%d,%d) -> satisfacao: %d\n\n",p , x,y, satis);
+                    //printf("Peca %d na posicao: (%d,%d) -> satisfacao: %d\n\n",p , x,y, satis);
 
                     if (satis == 0) // nao estiver satisfeito
                         lista = adiciona_peca(lista, x, y, p);
@@ -179,7 +176,6 @@ void simul(Configuracoes C, int PrimVez){
 
                 lista = lista -> prox;
             }
-            free(lista);
             linha();
         }
     }
@@ -188,6 +184,7 @@ void simul(Configuracoes C, int PrimVez){
 	for (i = 0; i < nlin; i++)
     	free(quadro[i]);
 	free(quadro);
+    free(lista);
 }
 
 int menu_simul()
@@ -198,8 +195,8 @@ int menu_simul()
         printf("1 - Modificar limite de satisfacao\n");
         printf("2 - Modificar tipo de vizinhanca\n");
         printf("3 - Modificar tipo de deslocamento\n");
-        printf("4 - Terminar Simulacao\n");
-        printf("5 - Continuar simulacao\n");
+        printf("4 - Continuar simulacao\n");
+        printf("5 - Terminar Simulacao\n");
         printf("Escolha uma Opcao: "); scanf("%d", &i);
     } while (i < 1 || 5 < i);
     return i;
@@ -208,8 +205,10 @@ int menu_simul()
 void simul_passo(Configuracoes C, int PrimVez)
 {
     int **quadro;
-    int erro = 0, i, j, x, y, p, iter, m;
+    int erro = 0, i, j, x, y, p, m, iter,nlin, ncol;
     int satis;
+    ppeca_ins lista = NULL; // guarda as pecas instisfeitas
+
     if (PrimVez == 1){  // Configuracoes STANDARD (se ainda nao tiver sido escolhido uma configuraÁao)
         mostra(C); putchar('\n');
         C = Standard(&erro);
@@ -218,17 +217,19 @@ void simul_passo(Configuracoes C, int PrimVez)
     }
     mostra(C); putchar('\n');//
 
+    nlin = C.DimGrid[0]; ncol = C.DimGrid[1];
+
     // Criar quadro com base nas configs
-    quadro = malloc(C.DimGrid[1] * sizeof(int *));
+    quadro = malloc(nlin * sizeof(int *));
     if (quadro == NULL)
     {
         printf("Nao ha memoria para o quadro");
         exit(0);
     }
     printf("Array de ponteiros criado\n" ); // remover linha
-    for (i = 0; i < C.DimGrid[1]; i++)
+    for (i = 0; i < nlin; i++)
     {
-        quadro[i] = malloc(C.DimGrid[1] * sizeof(int));
+        quadro[i] = malloc(ncol * sizeof(int));
         if (quadro[i] == NULL)
         {
             printf("Nao ha memoria para o quadro");
@@ -242,12 +243,11 @@ void simul_passo(Configuracoes C, int PrimVez)
     {
         for (i = 0; i < C.DimPop; i++)
         {
-            do 
-            {
-                x = numero_random(0, C.DimGrid[0]-1);
-                y = numero_random(0, C.DimGrid[1]-1);
-            } while ((quadro[x])[y] != 0);
-            (quadro[x])[y] = j;
+            do {
+                y = numero_random(0, nlin-1);
+                x = numero_random(0, ncol-1);
+            } while ((quadro[y])[x] != 0);
+            (quadro[y])[x] = j;
         }
     }
 
@@ -290,52 +290,68 @@ void simul_passo(Configuracoes C, int PrimVez)
                 scanf(" %d", &(C.Desloc));
             } while (C.TipoViz<1 || C.TipoViz>2);
         }
-        else if (m == 4)
+        else if (m == 5)
         {
             break;
         }
 
-        mostrar_quadro(C.DimGrid[0], C.DimGrid[1], quadro);
+        mostrar_quadro(nlin, ncol, quadro);
 
-        for (i = 0; i < C.DimGrid[0]; i++)
+        for (y = 0; y < nlin; y++)
         {
-            for (j = 0; j < C.DimGrid[1]; j++)
+            for (x = 0; x < ncol; x++)
             {
-                if ((quadro[i])[j] > 0) // se existir uma peca
+                if ((quadro[y])[x] > 0) // se existir uma peca
                 {
-                    p = (quadro[i])[j]; // p vai ser igual a 1, 2 ou 3 consoante a pessa;
+                    p = (quadro[y])[x];
                     if (C.TipoViz == 1 && C.TipoFront == 1)
-                        satis = viz_neuman_fech(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_neuman_fech(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 1 && C.TipoFront == 2)
-                        satis = viz_neuman_tor(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_neuman_tor(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 1)
-                        satis = viz_moore_fech(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_fech(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 2)
-                        satis = viz_moore_tor(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_tor(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
 
-                    printf("Pessa na posicao: (%d,%d) -> satisfacao: %d\n", i,j, satis);
+                    //printf("Peca %d na posicao: (%d,%d) -> satisfacao: %d\n\n",p , x,y, satis);
 
                     if (satis == 0) // nao estiver satisfeito
-                    {
-                        (quadro[i])[j] = 0;
-                        do // movimento aleatorio
-                        {
-                            x = numero_random(0, C.DimGrid[0]-1);
-                            y = numero_random(0, C.DimGrid[1]-1);
-                        } while ((quadro[x])[y] != 0);
-                        (quadro[x])[y] = p; 
-                    }
+                        lista = adiciona_peca(lista, x, y, p);
                 }
             }
         }
+        // Mexer as pessas instisfeitas
+        if (!lista)
+        {
+            printf("Nao existem pessas instisfeitas!\n");
+            break;
+        }
+        else
+        {
+            linha();
+            mostra_lista(lista);
+            
+            while (lista -> prox != NULL)
+            {
+                (quadro[lista->y])[lista->x] = 0;
+                do { // movimento aleatorio
+                    y = numero_random(0, nlin-1);
+                    x = numero_random(0, ncol-1);
+                } while ((quadro[y])[x] != 0);
+                (quadro[y])[x] = lista->p;
 
+                lista = lista -> prox;
+            }
+            linha();
+        }
     }
  
     // free arrays
-    for (i = 0; i < C.DimGrid[1]; i++)
+    for (i = 0; i < nlin; i++)
         free(quadro[i]);
-    free(quadro);    
+    free(quadro);
+    free(lista);
 }
