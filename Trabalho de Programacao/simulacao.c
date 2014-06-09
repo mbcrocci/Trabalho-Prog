@@ -127,7 +127,7 @@ void simul(Configuracoes C, int PrimVez){
         }
     }
 
-    for (iter = 0; iter < 1/*C.NIter*/; iter++) // iteracoes especificadas na configuracao
+    for (iter = 0; iter < 2/*C.NIter*/; iter++) // iteracoes especificadas na configuracao
     {
         mostrar_quadro(nlin, ncol, quadro);
 
@@ -172,14 +172,15 @@ void simul(Configuracoes C, int PrimVez){
             {
                 (quadro[lista->y])[lista->x] = 0;
                 do { // movimento aleatorio
-                    x = numero_random(0, C.DimGrid[0]-1);
-                    y = numero_random(0, C.DimGrid[1]-1);
+                    y = numero_random(0, nlin-1);
+                    x = numero_random(0, ncol-1);
                 } while ((quadro[y])[x] != 0);
                 (quadro[y])[x] = lista->p;
 
                 lista = lista -> prox;
             }
             free(lista);
+            linha();
         }
     }
  
