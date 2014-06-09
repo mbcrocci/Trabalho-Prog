@@ -88,7 +88,7 @@ int viz_moore_fech (int x, int y, int lin, int col, float per, int **quadro)
      Baseado nas coordenadas ve as pecas a volta e decide se esta satisfeita
      Devolve 1 se estiver ou 0 se nao
      */
-    int p = (quadro[x])[y]; // peca
+    int p = (quadro[y])[x]; // peca
     
     if (y == 0) // primeira linha
     {
@@ -189,7 +189,7 @@ int viz_moore_fech (int x, int y, int lin, int col, float per, int **quadro)
 
 int viz_neuman_tor (int x, int y, int lin, int col, float per, int **quadro)
 {
-    int p = (quadro[x])[y]; // peca
+    int p = (quadro[y])[x]; // peca
 
     if (y == 0) // primeira linha
     {
@@ -280,7 +280,7 @@ int viz_moore_tor (int x, int y, int lin, int col, float per, int **quadro)
      Devolve 1 se estiver ou 0 se nao
      */
     
-    int p = (quadro[x])[y]; // peca
+    int p = (quadro[y])[x]; // peca
 
     if (y == 0) // primeira linha
     {

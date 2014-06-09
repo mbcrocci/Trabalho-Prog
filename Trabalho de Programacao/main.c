@@ -11,7 +11,7 @@ int MenuPrincipal(){
         linha();
         puts("1 - Configuracoes");
         puts("2 - Simulacao Sequencial");
-        puts("3 - Simulacao Sem Interropcao");
+        puts("3 - Simulacao Passo a Passo");
         puts("4 - Guardar Informacao");
         puts("5 - Recuperar Informacao");
         puts("6 - Terminar");
@@ -32,11 +32,12 @@ int main(){
         case 1: Conf = config(&FirstTime); break;
         case 2: if (FirstTime == 1) // Se a funcao simul() for chamada antes das configuracoes serem escolhidas 
                         Conf = inicializ(); //incializaÁ„o da estrutura - poe tudo a zeros
-                    simul(Conf, FirstTime);
-                    break;  //chamada a funÁao da simulaÁao do "quadro" (main)
-        case 3: if (FirstTime == 1) // Se a funcao simul_passo() for chamada antes das configuracoes serem escolhidas 
+                    simul(Conf, FirstTime, 0); 
+                    break;  //chamada a funÁao da simulaÁao do "quadro" (main), 0 zero indique que e sequencial
+                    
+        case 3: if (FirstTime == 1) // Se a funcao simul() for chamada antes das configuracoes serem escolhidas 
                         Conf = inicializ(); //incializaÁ„o da estrutura - poe tudo a zeros
-                    simul_passo(Conf, FirstTime);
+                    simul(Conf, FirstTime, 1);
                     break;
         //case 3: Save_Info(); break; //falta funÁao para guardar informaÁao da simulaÁao
         //case 4: Recover_Info(); break; //falta funÁao para recuperar informaÁao da simulaÁao

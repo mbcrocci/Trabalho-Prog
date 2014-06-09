@@ -1,0 +1,20 @@
+CONFIGURACOES
+DIM: 8 15
+POPS: 2
+DIM_POP: 40
+VIZ: 1
+FRONTEIRA: 1
+K: 50 50
+MOVE: 1
+NUM_ITER: 50
+
+
+Alteracoes:
+Novo limite de satisfacao populacao X: 60.000000
+Novo limite de satisfacao populacao O: 60.000000
+Iteracao 0:
+Percentagem de pecas X instisfeitas: 0.000000
+Percentagem de pecas O instisfeitas: 0.000000
+
+
+
