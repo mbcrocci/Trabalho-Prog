@@ -12,14 +12,13 @@ int MenuPrincipal(){
         puts("1 - Configuracoes");
         puts("2 - Simulacao Sequencial");
         puts("3 - Simulacao Passo a Passo");
-        puts("4 - Guardar Informacao");
-        puts("5 - Recuperar Informacao");
-        puts("6 - Terminar");
+        puts("4 - Recuperar Informacao");
+        puts("5 - Terminar");
         printf("Escolha uma Opcao: ");
         scanf(" %d", &x); 
-        if (x <1 || x >6) 
+        if (x <1 || x >5) 
             puts("Erro na escolha da opcao!");
-    } while (x <1 || x >6);
+    } while (x <1 || x >5);
     return x;
 }
 
@@ -39,12 +38,13 @@ int main(){
                         Conf = inicializ(); //incializaÁ„o da estrutura - poe tudo a zeros
                     simul(Conf, FirstTime, 1);
                     break;
-        //case 3: Save_Info(); break; //falta funÁao para guardar informaÁao da simulaÁao
-        //case 4: Recover_Info(); break; //falta funÁao para recuperar informaÁao da simulaÁao
-            default:
-                break;
+
+        // case 4: recover_info(&Conf); break; //falta funÁao para recuperar informaÁao da simulaÁao
+            
+        default:
+            break;
         }
-    } while (i != 6);
+    } while (i != 5);
     free(Conf.PercSatisf);
     return 0;
 }

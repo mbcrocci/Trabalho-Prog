@@ -70,10 +70,11 @@ int menu_simul()
         printf("2 - Modificar tipo de vizinhanca\n");
         printf("3 - Modificar tipo de deslocamento\n");
         printf("4 - Continuar simulacao\n");
-        printf("5 - Terminar a simulacao e guardar dados para continuar depois\n");
-        printf("6 - Terminar Simulacao\n");
+        printf("5 - Recuperar a configuracoes da ultima execucao\n");
+        printf("6 - Terminar a simulacao e guardar dados para continuar depois\n");
+        printf("7 - Terminar Simulacao\n");
         printf("Escolha uma Opcao: "); scanf("%d", &i);
-    } while (i < 1 || 6 < i);
+    } while (i < 1 || 7 < i);
     return i;
 }
 
@@ -99,10 +100,61 @@ void mostra_lista (ppeca_ins lista)
 {
     while(lista)
     {
-        printf("Peca: %d : (%d,%d)\n", lista->p, lista->x, lista->y);
+        printf("Peca: %d \tPosicao: (%d,%d)\n", lista->p, lista->x, lista->y);
         lista = lista -> prox;
     }
 }
+void Save_Info(Configuracoes *C, int nlin, int ncol, int **quadro){
+     FILE *f;
+     ppeca_ins ambiente = NULL;
+     int x, y;
+
+    if ((f = fopen("interrup.dat", "wb")) == NULL)
+    {
+        puts("Erro no acesso ao ficheiro!");
+        return;
+    }
+
+    else
+    {
+      fwrite(C,sizeof(Configuracoes),1,f);
+
+        for (y = 0; y < nlin; y++)
+            for (x = 0; x < ncol; x++)
+                ambiente = adiciona_peca(ambiente, x, y, quadro[y][x]); 
+
+        while (ambiente != NULL)
+        {
+            fwrite(ambiente, sizeof(peca_ins), 1, f); //falta guardar o ambiente(valoes e coordenadas das pecas) na altura da interropcao  
+            ambiente = ambiente -> prox;
+
+        }
+
+        fclose(f);
+    }
+}
+
+ppeca_ins recover_info(Configuracoes *C, ppeca_ins ambiente){
+    FILE *f;
+    f = fopen("interrup.dat", "rb");
+
+    if (f != NULL)
+    {
+        (*C).PercSatisf = malloc(sizeof(float));
+        fread(C, sizeof(Configuracoes), 1, f);
+        ambiente = fread(ambiente, sizeof(peca_ins), 1, f);
+        fclose(f);
+
+        return ambiente;
+    }
+    else
+    {
+        puts("\nErro no acesso ao ficheiro!");
+        return ambiente;
+    }
+}
+
+
 
 void simul(Configuracoes C, int PrimVez, int passo) {
 	int **quadro;
@@ -111,6 +163,7 @@ void simul(Configuracoes C, int PrimVez, int passo) {
     int num_desloc_X = 0, num_desloc_O = 0, num_desloc_H = 0;
 
     ppeca_ins lista = NULL; // guarda as pecas instisfeitas
+    ppeca_ins ambiente = NULL;
     FILE *rel = fopen("rel.txt", "w");
 
     if (rel == NULL) printf("Impossivel criar relatorio");
@@ -176,6 +229,7 @@ void simul(Configuracoes C, int PrimVez, int passo) {
         // por tudo sobre numero de satisfeitos ou delocamentos a zero para nova iteracao
         num_peca_ins_X = 0; num_peca_ins_O = 0; num_peca_ins_H = 0;
         num_desloc_X = 0; num_desloc_O = 0; num_desloc_H = 0;
+
         if (passo == 1)
         {
             m = menu_simul();
@@ -227,11 +281,24 @@ void simul(Configuracoes C, int PrimVez, int passo) {
             }
             else if (m == 5)
             {
+                while (ambiente != NULL)
+                {
+                    quadro[ambiente->y][ambiente->x] = ambiente -> p;
+
+                    ambiente = ambiente -> prox;
+                }
+            }
+
+            else if (m == 6) // sair e guardar configs
+            {
+                Save_Info(&C, nlin, ncol, quadro);
                 break;
             }
         }
 
         if (passo == 0) espera(1); // sequencial 
+
+        linha();
         mostrar_quadro(nlin, ncol, quadro);
 
         for (y = 0; y < nlin; y++)
@@ -500,6 +567,7 @@ void simul(Configuracoes C, int PrimVez, int passo) {
 
         if (C.NPop == 3)
             fprintf(rel, "Numero de deslocamentos pecas H:\n");
+
     } // fim do loop iteracao
  
 

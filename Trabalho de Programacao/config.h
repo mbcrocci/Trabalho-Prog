@@ -29,7 +29,7 @@ typedef struct peca_ins peca_ins, *ppeca_ins;
 struct peca_ins
 {
 	int x, y, p; // coordenadas das pecas instisfeitas e tipo
-	ppeca_ins *prox;
+	ppeca_ins prox;
 
 };
 

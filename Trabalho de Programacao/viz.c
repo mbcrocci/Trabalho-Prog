@@ -1,5 +1,4 @@
 #include "viz.h"
-#include <stdio.h>
 
 int check (int x, int y, int **quadro, int p)
 {
