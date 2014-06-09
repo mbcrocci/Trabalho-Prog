@@ -126,6 +126,7 @@ void simul(Configuracoes C, int PrimVez){
 
     for (iter = 0; iter < C.NIter; iter++) // iteracoes especificadas na configuracao
     {
+        espera(1);
         mostrar_quadro(nlin, ncol, quadro);
 
         for (y = 0; y < nlin; y++)
@@ -139,13 +140,13 @@ void simul(Configuracoes C, int PrimVez){
                         satis = viz_neuman_fech(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 1 && C.TipoFront == 2)
-                        satis = viz_neuman_tor(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_neuman_tor(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 1)
-                        satis = viz_moore_fech(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_fech(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 2)
-                        satis = viz_moore_tor(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_tor(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     //printf("Peca %d na posicao: (%d,%d) -> satisfacao: %d\n\n",p , x,y, satis);
 
@@ -165,18 +166,184 @@ void simul(Configuracoes C, int PrimVez){
             linha();
             mostra_lista(lista);
             
-            while (lista -> prox != NULL)
+            if (C.Desloc == 1)
             {
-                (quadro[lista->y])[lista->x] = 0;
-                do { // movimento aleatorio
-                    y = numero_random(0, nlin-1);
-                    x = numero_random(0, ncol-1);
-                } while ((quadro[y])[x] != 0);
-                (quadro[y])[x] = lista->p;
+                while (lista -> prox != NULL)
+                {
+                    p = quadro[lista->y][lista->x];
+                    (quadro[lista->y])[lista->x] = 0;
+                    // ver todas as pecas a volta, no sentido horario
 
-                lista = lista -> prox;
+                    printf("A ver: (%d, %d)\n", lista->x, lista->y);
+                    if (lista->y == 0) // primeira linha
+                    {
+                        if (lista->x == 0) // primeira peca
+                        {
+                            if ((quadro[lista->y])[(lista->x)+1] == 0)
+                                (quadro[lista->y])[(lista->x)+1] = p; 
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)+1])[lista->x] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)] = p;
+                        }
+                        
+                        else if (lista -> x == ncol - 1) // ultima peca da primeira linha
+                        {
+                            if ((quadro[(lista->y)+1])[(lista->x)] == 0)
+                                (quadro[(lista->y)+1])[(lista->x)]  = p;
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)-1] = p;
+                        }
+                        
+                        else
+                        {
+                            if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)] = p;
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)-1] = p;
+                        }
+                    }
+                    
+                    else if (lista -> y == nlin - 1) // ultima linha
+                    {
+                        if (lista -> x == 0) // primeira peca
+                        {
+                            if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)+1] = p;
+                        }
+                        
+                        else if (lista -> x == ncol - 1) // ultima peca
+                        {
+                            if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)] = p;
+                        }
+                        
+                        else
+                        {
+                            if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)+1] == 0)
+                                (quadro[(lista->y)-1])[(lista->x)+1] = p;
+                        }
+                    }
+                    else if (lista -> x == 0) // primeira coluna
+                    {
+                        if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                            (quadro[(lista->y)])[(lista->x)+1]  = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)+1] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)+1] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)-1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)+1] == 0)
+                            (quadro[(lista->y)-1])[(lista->x)+1] = p;
+                    }
+                    
+                    else if (lista -> x == ncol - 1) // ultima coluna
+                    {
+                        if ((quadro[(lista->y)+1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)-1])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)] == 0)
+                            (quadro[(lista->y)-1])[(lista->x)] = p;
+                    }
+                    
+                    else // resto das pecas
+                    {
+                        if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                            (quadro[(lista->y)])[(lista->x)+1] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)+1] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)+1] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)-1])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)-1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)+1] == 0)
+                            (quadro[(lista->y)-1])[(lista->x)+1] = p;
+                    }
+                    lista = lista -> prox;
+                } linha();
             }
-            linha();
+            else if (C.Desloc == 2)
+            {
+                while (lista -> prox != NULL)
+                {
+                    (quadro[lista->y])[lista->x] = 0;
+                    do { // movimento aleatorio
+                        y = numero_random(0, nlin-1);
+                        x = numero_random(0, ncol-1);
+                    } while ((quadro[y])[x] != 0);
+                    (quadro[y])[x] = lista->p;
+
+                    lista = lista -> prox;
+                }
+                linha();
+            }
         }
     }
  
@@ -308,13 +475,13 @@ void simul_passo(Configuracoes C, int PrimVez)
                         satis = viz_neuman_fech(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 1 && C.TipoFront == 2)
-                        satis = viz_neuman_tor(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_neuman_tor(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 1)
-                        satis = viz_moore_fech(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_fech(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 2)
-                        satis = viz_moore_tor(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_tor(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     //printf("Peca %d na posicao: (%d,%d) -> satisfacao: %d\n\n",p , x,y, satis);
 
@@ -333,19 +500,184 @@ void simul_passo(Configuracoes C, int PrimVez)
         {
             linha();
             mostra_lista(lista);
-            
-            while (lista -> prox != NULL)
-            {
-                (quadro[lista->y])[lista->x] = 0;
-                do { // movimento aleatorio
-                    y = numero_random(0, nlin-1);
-                    x = numero_random(0, ncol-1);
-                } while ((quadro[y])[x] != 0);
-                (quadro[y])[x] = lista->p;
 
-                lista = lista -> prox;
+            if (C.Desloc == 1)
+            {
+                while (lista -> prox != NULL)
+                {
+                    p = quadro[lista->y][lista->x];
+                    (quadro[lista->y])[lista->x] = 0;
+                    // ver todas as pecas a volta, no sentido horario
+
+                    if (lista->y == 0) // primeira linha
+                    {
+                        if (lista->x == 0) // primeira peca
+                        {
+                            if ((quadro[lista->y])[(lista->x)+1] == 0)
+                                (quadro[lista->y])[(lista->x)+1] = p; 
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)+1])[lista->x] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)] = p;
+                        }
+                        
+                        else if (lista -> x == ncol-1) // ultima peca da primeira linha
+                        {
+                            if ((quadro[(lista->y)+1])[(lista->x)] == 0)
+                                (quadro[(lista->y)+1])[(lista->x)]  = p;
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)-1] = p;
+                        }
+                        
+                        else
+                        {
+                            if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)] = p;
+
+                            else if ((quadro[(lista->y)+1])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)+1])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)-1] = p;
+                        }
+                    }
+                    
+                    else if (lista -> y == nlin-1) // ultima linha
+                    {
+                        if (lista -> x == 0) // primeira peca
+                        {
+                            if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)+1] = p;
+                        }
+                        
+                        else if (lista -> x == ncol-1) // ultima peca
+                        {
+                            if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)] = p;
+                        }
+                        
+                        else
+                        {
+                            if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)+1] = p;
+
+                            else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)-1] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)-1] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                                (quadro[(lista->y)-1])[(lista->x)] = p;
+
+                            else if ((quadro[(lista->y)-1])[(lista->x)+1] == 0)
+                                (quadro[(lista->y)-1])[(lista->x)+1] = p;
+                        }
+                    }
+                    else if (lista -> x == 0) // primeira coluna
+                    {
+                        if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                            (quadro[(lista->y)])[(lista->x)+1]  = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)+1] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)+1] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)-1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)+1] == 0)
+                            (quadro[(lista->y)-1])[(lista->x)+1] = p;
+                    }
+                    
+                    else if (lista -> x == ncol-1) // ultima coluna
+                    {
+                        if ((quadro[(lista->y)+1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)-1])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)] == 0)
+                            (quadro[(lista->y)-1])[(lista->x)] = p;
+                    }
+                    
+                    else // resto das pecas
+                    {
+                        if ((quadro[(lista->y)])[(lista->x)+1] == 0 )
+                            (quadro[(lista->y)])[(lista->x)+1] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)+1] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)+1] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)+1])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)+1])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)-1] == 0 )
+                            (quadro[(lista->y)-1])[(lista->x)-1] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)] == 0 )
+                            (quadro[(lista->y)-1])[(lista->x)] = p;
+
+                        else if ((quadro[(lista->y)-1])[(lista->x)+1] == 0)
+                            (quadro[(lista->y)-1])[(lista->x)+1] = p;
+                    }
+                    lista = lista -> prox;
+                }
             }
-            linha();
+            
+            else if (C.Desloc == 2)
+            {
+                while (lista -> prox != NULL)
+                {
+                    (quadro[lista->y])[lista->x] = 0;
+                    do { // movimento aleatorio
+                        y = numero_random(0, nlin-1);
+                        x = numero_random(0, ncol-1);
+                    } while ((quadro[y])[x] != 0);
+                    (quadro[y])[x] = lista->p;
+
+                    lista = lista -> prox;
+                }
+            }
         }
     }
  
