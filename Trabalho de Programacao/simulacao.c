@@ -26,7 +26,7 @@ void mostrar_quadro (int nlin, int ncol, int **quadro)
     {
         for (x = 0; x < ncol; x++)
         {
-            if (quadro[y][x] == 1)
+            /*if (quadro[y][x] == 1)
                 printf("| X |");
 
             else if (quadro[y][x] == 2)
@@ -34,6 +34,8 @@ void mostrar_quadro (int nlin, int ncol, int **quadro)
 
             else if (quadro[y][x] == 0)
                 printf("|   |");
+            */
+            printf("| %d |", quadro[y][x]);
         }
             
         printf("\n");
@@ -74,6 +76,7 @@ int menu_simul()
     } while (i < 1 || 6 < i);
     return i;
 }
+
 ppeca_ins adiciona_peca (ppeca_ins lista, int x, int y, int p)
 {
     ppeca_ins aux = lista;
@@ -170,12 +173,15 @@ void simul(Configuracoes C, int PrimVez, int passo) {
 
     for (iter = 0; iter < C.NIter; iter++) // iteracoes
     {
+        // por tudo sobre numero de satisfeitos ou delocamentos a zero para nova iteracao
+        num_peca_ins_X = 0; num_peca_ins_O = 0; num_peca_ins_H = 0;
+        num_desloc_X = 0; num_desloc_O = 0; num_desloc_H = 0;
         if (passo == 1)
         {
             m = menu_simul();
+            fprintf(rel, "Alteracoes:\n");
             if (m == 1)
             {
-                fprintf(rel, "Alteracoes:\n");
                 if (C.NPop == 2)
                 {
                     printf("Novo limite de satisfacao para populacao X: ");
@@ -235,17 +241,18 @@ void simul(Configuracoes C, int PrimVez, int passo) {
                 if ((quadro[y])[x] > 0) // se existir uma peca
                 {
                     // Diferentes tipos de vizinhanca e fronteira
+                    p = (quadro[y])[x];
                     if (C.TipoViz == 1 && C.TipoFront == 1)
-                        satis = viz_neuman_fech(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
+                        satis = viz_neuman_fech(x, y, nlin-1, ncol-1, C.PercSatisf[quadro[y][x]-1], quadro);
 
                     else if (C.TipoViz == 1 && C.TipoFront == 2)
-                        satis = viz_neuman_tor(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
+                        satis = viz_neuman_tor(x, y, nlin-1, ncol-1, C.PercSatisf[quadro[y][x]-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 1)
-                        satis = viz_moore_fech(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_fech(x, y, nlin-1, ncol-1, C.PercSatisf[quadro[y][x]-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 2)
-                        satis = viz_moore_tor(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_tor(x, y, nlin-1, ncol-1, C.PercSatisf[quadro[y][x]-1], quadro);
 
                     if (satis == 0) // nao estiver satisfeito
                     {
@@ -263,13 +270,21 @@ void simul(Configuracoes C, int PrimVez, int passo) {
             }
         }
 
-        fprintf(rel, "Iteracao %d:\n", iter);
+        fprintf(rel, "\n\nIteracao %d:\n", iter+1);
         fprintf(rel, "Percentagem de pecas X instisfeitas: %f\n", (num_peca_ins_X * 100.0) / C.DimPop);
         fprintf(rel, "Percentagem de pecas O instisfeitas: %f\n", (num_peca_ins_O * 100.0) / C.DimPop);
         if (C.NPop == 3)
             fprintf(rel, "Percentagem de pecas H instisfeitas: %f\n", (num_peca_ins_H * 100.0) / C.DimPop);
 
         fprintf(rel, "\n\n\n");
+
+        // Se ja nao houver pessas instisfeitas
+        if (num_peca_ins_X == 0 && num_peca_ins_O == 0 && num_peca_ins_H == 0)
+        {
+            printf("Ja nao existem pessas instisfeitas!\n");
+            break;
+        }
+
 
         // Mexer as pessas instisfeitas
         if (!lista)
@@ -442,6 +457,7 @@ void simul(Configuracoes C, int PrimVez, int passo) {
                         else if ((quadro[(lista->y)-1])[(lista->x)+1] == 0)
                             (quadro[(lista->y)-1])[(lista->x)+1] = lista -> p;
                     }
+                    // aumentar o numero de deslocamentos para cada tipo de peca
                     if (lista -> p == 1)
                         num_desloc_X++;
 

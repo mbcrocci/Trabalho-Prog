@@ -9,10 +9,119 @@ MOVE: 1
 NUM_ITER: 50
 
 
-Alteracoes:
-Novo limite de satisfacao populacao X: 60.000000
-Novo limite de satisfacao populacao O: 60.000000
-Iteracao 0:
+
+
+Iteracao 1:
+Percentagem de pecas X instisfeitas: 15.000000
+Percentagem de pecas O instisfeitas: 17.500000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 5
+Numero de deslocamentos pecas O: 7
+
+
+Iteracao 2:
+Percentagem de pecas X instisfeitas: 2.500000
+Percentagem de pecas O instisfeitas: 2.500000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 1
+Numero de deslocamentos pecas O: 1
+
+
+Iteracao 3:
+Percentagem de pecas X instisfeitas: 0.000000
+Percentagem de pecas O instisfeitas: 2.500000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 1
+Numero de deslocamentos pecas O: 0
+
+
+Iteracao 4:
+Percentagem de pecas X instisfeitas: 0.000000
+Percentagem de pecas O instisfeitas: 2.500000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 0
+Numero de deslocamentos pecas O: 1
+
+
+Iteracao 5:
+Percentagem de pecas X instisfeitas: 0.000000
+Percentagem de pecas O instisfeitas: 2.500000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 0
+Numero de deslocamentos pecas O: 1
+
+
+Iteracao 6:
+Percentagem de pecas X instisfeitas: 0.000000
+Percentagem de pecas O instisfeitas: 2.500000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 0
+Numero de deslocamentos pecas O: 1
+
+
+Iteracao 7:
+Percentagem de pecas X instisfeitas: 0.000000
+Percentagem de pecas O instisfeitas: 2.500000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 0
+Numero de deslocamentos pecas O: 1
+
+
+Iteracao 8:
+Percentagem de pecas X instisfeitas: 0.000000
+Percentagem de pecas O instisfeitas: 5.000000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 0
+Numero de deslocamentos pecas O: 2
+
+
+Iteracao 9:
+Percentagem de pecas X instisfeitas: 2.500000
+Percentagem de pecas O instisfeitas: 5.000000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 0
+Numero de deslocamentos pecas O: 3
+
+
+Iteracao 10:
+Percentagem de pecas X instisfeitas: 0.000000
+Percentagem de pecas O instisfeitas: 5.000000
+
+
+
+Deslocamentos:
+Numero de deslocamentos pecas X: 1
+Numero de deslocamentos pecas O: 1
+
+
+Iteracao 11:
 Percentagem de pecas X instisfeitas: 0.000000
 Percentagem de pecas O instisfeitas: 0.000000
 
