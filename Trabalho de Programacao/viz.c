@@ -3,7 +3,8 @@
 
 int check (int x, int y, int **quadro, int p)
 {
-    if ((quadro[x])[y] == p || (quadro[x])[y] == 0) // se a posicao tiver alguma peca
+    printf("checking (%d,%d)\n",x,y);
+    if (((quadro[y])[x] == p) || ((quadro[y])[x] == 0)) // se a posicao tiver alguma peca
         return 1;
     else
         return 0;
@@ -11,13 +12,12 @@ int check (int x, int y, int **quadro, int p)
 
 int viz_neuman_fech (int x, int y, int lin, int col, float per, int **quadro)
 {
-    int p = (quadro[x])[y]; // peca
-    printf("Peca : %d : ", p);
-
+    int p = (quadro[y])[x]; // peca
     if (y == 0) // primeira linha
     {
         if (x == 0) // primeira peca
         {
+            printf("primeira pessa\n" );
             if (check(x+1, y, quadro, p)
                 + check(x, y+1, quadro, p)
                 >= (2 * per)/100) return 1;

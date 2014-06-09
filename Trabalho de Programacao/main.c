@@ -1,14 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
+#include <stdlib.h>
 #include "config.h"
 #include "simulacao.h"
 
-void linha(){
-    int i;
-    for (i = 0; i < 60; i++)
-        putchar('_');
-    puts("\n");
-}
 
 int MenuPrincipal(){
     int x;
@@ -16,7 +11,7 @@ int MenuPrincipal(){
         linha();
         puts("1 - Configuracoes");
         puts("2 - Simulacao Sequencial");
-        puts("3 - Siulacao Sem Interropcao");
+        puts("3 - Simulacao Sem Interropcao");
         puts("4 - Guardar Informacao");
         puts("5 - Recuperar Informacao");
         puts("6 - Terminar");
@@ -29,20 +24,26 @@ int MenuPrincipal(){
 }
 
 int main(){
-    int i, firstTime = 1;
-    int *first = &firstTime;
+    int i, FirstTime = 1;
     Configuracoes Conf;
     do{
         i = MenuPrincipal();
         switch (i){
-        case 1: Conf = config(first); break;
-        case 2: simul(Conf, first); break;  //chamada a funÁao da simulaÁao do "quadro" (main)
-        case 3: simul_passo(Conf, first); break;
-            //case 3: Save_Info(); break; //falta funÁao para guardar informaÁao da simulaÁao
-            //case 4: Recover_Info(); break; //falta funÁao para recuperar informaÁao da simulaÁao
+        case 1: Conf = config(&FirstTime); break;
+        case 2: if (FirstTime == 1) // Se a funcao simul() for chamada antes das configuracoes serem escolhidas 
+                        Conf = inicializ(); //incializaÁ„o da estrutura - poe tudo a zeros
+                    simul(Conf, FirstTime);
+                    break;  //chamada a funÁao da simulaÁao do "quadro" (main)
+        case 3: if (FirstTime == 1) // Se a funcao simul_passo() for chamada antes das configuracoes serem escolhidas 
+                        Conf = inicializ(); //incializaÁ„o da estrutura - poe tudo a zeros
+                    simul_passo(Conf, FirstTime);
+                    break;
+        //case 3: Save_Info(); break; //falta funÁao para guardar informaÁao da simulaÁao
+        //case 4: Recover_Info(); break; //falta funÁao para recuperar informaÁao da simulaÁao
             default:
                 break;
         }
-    } while (i != 5);
+    } while (i != 6);
+    free(Conf.PercSatisf);
     return 0;
 }

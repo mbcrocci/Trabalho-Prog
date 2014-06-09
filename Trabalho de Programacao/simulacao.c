@@ -1,5 +1,4 @@
 #define _CRT_SECURE_NO_WARNINGS
-//#include <omp.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -7,7 +6,6 @@
 #include <time.h>
 #include "simulacao.h"
 #include "config.h"
-#include "quadro.h"
 #include "random.h"
 #include "viz.h"
 
@@ -19,6 +17,19 @@ void espera(int seg) // Funcao fornecida no enunciado
         for(i=0; i<100000; i++)
             ;
     }while(difftime(time(NULL), inicio) < seg);
+}
+
+void mostrar_quadro (int nlin, int ncol, int **quadro)
+{
+    int x, y;
+    for (y = 0; y < nlin; y++)
+    {
+        for (x = 0; x < ncol; x++)
+            printf("| %d |", quadro[y][x]);
+            
+        printf("\n");
+    }
+    puts("\n");
 }
 
 Configuracoes Standard(int *falha){
@@ -37,31 +48,61 @@ Configuracoes Standard(int *falha){
 	}
 	return Conf;
 }
+ppeca_ins adiciona_peca (ppeca_ins lista, int x, int y, int p)
+{
+    ppeca_ins aux = lista;
+    ppeca_ins novo = malloc(sizeof(peca_ins));
+    if (novo == NULL)
+    {
+        printf("Erro ao reservar memoria\n");
+        return lista;
+    }
+    novo->x = x; novo->y = y; novo->p = p;
+    novo->prox = NULL;
+    if (lista == NULL) return novo;
+    while (aux->prox)
+        aux = aux -> prox;
 
-void simul(Configuracoes C, int *PrimVez){
+    aux ->prox = novo;
+    return lista;
+}
+void mostra_lista (ppeca_ins lista)
+{
+    while(lista)
+    {
+        printf("Peca: %d : (%d,%d)\n", lista->p, lista->x, lista->y);
+        lista = lista -> prox;
+    }
+}
+
+void simul(Configuracoes C, int PrimVez){
 	int **quadro;
-	int erro = 0, i, j, x, y, p, iter;
+	int erro = 0, i, j, x, y, p, iter,nlin, ncol;
 	int satis;
-    FILE *f;
-    f = fopen("pos.txt", "w"); // para poder ler os que estao satisfeitos
-	if (*PrimVez == 1){	// ConfiguraÁıes STANDARD (se ainda nao tiver sido escolhido uma configuraÁ„o)
+    ppeca_ins lista = NULL; // guarda as pecas instisfeitas
+
+    //FILE *f;
+    //f = fopen("pos.txt", "w"); // para poder ler os que estao satisfeitos
+	if (PrimVez == 1){	// ConfiguraÁıes STANDARD (se ainda nao tiver sido escolhido uma configuraÁ„o)
 		C = inicializ();
 		C = Standard(&erro);
 		if (erro == 1)
 			return;
 	}
 
+    nlin = C.DimGrid[0]; ncol = C.DimGrid[1];
+
 	// Criar quadro com base nas configs
-    quadro = malloc(C.DimGrid[1] * sizeof(int *));
+    quadro = malloc(nlin * sizeof(int *));
     if (quadro == NULL)
     {
         printf("Nao ha memoria para o quadro");
         exit(0);
     }
     printf("Array de ponteiros criado\n" ); // remover linha
-    for (i = 0; i < C.DimGrid[1]; i++)
+    for (i = 0; i < nlin; i++)
     {
-        quadro[i] = malloc(C.DimGrid[1] * sizeof(int));
+        quadro[i] = malloc(ncol * sizeof(int));
         if (quadro[i] == NULL)
         {
             printf("Nao ha memoria para o quadro");
@@ -75,106 +116,116 @@ void simul(Configuracoes C, int *PrimVez){
     {
         for (i = 0; i < C.DimPop; i++)
         {
-            quadro[0][0] = 4;
-            quadro[0][1] = 5;
-            quadro[1][0] = 6;
+            quadro[0][0] = 4; /// retirar estas linhas depois
+            quadro[0][1] = 6;
+            quadro[1][0] = 5;
             do {
-                x = numero_random(0, C.DimGrid[0]-1);
-                y = numero_random(0, C.DimGrid[1]-1);
-            } while ((quadro[x])[y] != 0);
-            (quadro[x])[y] = j;
+                y = numero_random(0, nlin-1);
+                x = numero_random(0, ncol-1);
+            } while ((quadro[y])[x] != 0);
+            (quadro[y])[x] = j;
         }
     }
 
-    for (iter = 0; iter < C.NIter; iter++) // iteracoes especificadas na configuracao
+    for (iter = 0; iter < 1/*C.NIter*/; iter++) // iteracoes especificadas na configuracao
     {
-        mostrar_quadro(C.DimGrid[0], C.DimGrid[1], quadro);
+        mostrar_quadro(nlin, ncol, quadro);
 
-        // #pragma omp parallel for
-        for (i = 0; i < C.DimGrid[0]; i++)
+        for (y = 0; y < nlin; y++)
         {
-            for (j = 0; j < C.DimGrid[1]; j++)
+            for (x = 0; x < ncol; x++)
             {
-                if ((quadro[i])[j] > 0) // se existir uma peca
+                if ((quadro[y])[x] > 0) // se existir uma peca
                 {
-                    p = (quadro[i])[j];
+                    p = (quadro[y])[x];
                     if (C.TipoViz == 1 && C.TipoFront == 1)
-                        satis = viz_neuman_fech(i, j, C.DimGrid[0]-1, C.DimGrid[1]-1, C.PercSatisf[p-1], quadro);
+                        satis = viz_neuman_fech(x, y, nlin-1, ncol-1, C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 1 && C.TipoFront == 2)
-                        satis = viz_neuman_tor(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_neuman_tor(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 1)
-                        satis = viz_moore_fech(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_fech(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
 
                     else if (C.TipoViz == 2 && C.TipoFront == 2)
-                        satis = viz_moore_tor(i, j, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
+                        satis = viz_moore_tor(x, y, C.DimGrid[0], C.DimGrid[1], C.PercSatisf[p-1], quadro);
 
-                    printf("Peca na posicao: (%d,%d) -> satisfacao: %d\n", i,j, satis);
+                    printf("Peca %d na posicao: (%d,%d) -> satisfacao: %d\n\n",p , x,y, satis);
 
-                    /*if (satis == 0) // nao estiver satisfeito
-                    {
-                        (quadro[i])[j] = 0;
-                        if (C.Desloc == 1)
-                        {
-                            continue;
-                        }
-
-                        else if (C.Desloc == 2)
-                        {
-                            do { // movimento aleatorio
-                                x = numero_random(0, C.DimGrid[0]-1);
-                                y = numero_random(0, C.DimGrid[1]-1);
-                            } while ((quadro[x])[y] != 0);
-                            (quadro[x])[y] = p;
-                        }
-                    }*/
+                    if (satis == 0) // nao estiver satisfeito
+                        lista = adiciona_peca(lista, x, y, p);
                 }
             }
-            espera(1);
         }
+        // Mexer as pessas instisfeitas
+        if (!lista)
+        {
+            printf("Nao existem pessas instisfeitas!\n");
+            break;
+        }
+        else
+        {
+            linha();
+            mostra_lista(lista);
+            
+            while (lista -> prox != NULL)
+            {
+                (quadro[lista->y])[lista->x] = 0;
+                do { // movimento aleatorio
+                    x = numero_random(0, C.DimGrid[0]-1);
+                    y = numero_random(0, C.DimGrid[1]-1);
+                } while ((quadro[y])[x] != 0);
+                (quadro[y])[x] = lista->p;
 
+                lista = lista -> prox;
+            }
+            free(lista);
+        }
     }
  
 	// free arrays
-	for (i = 0; i < C.DimGrid[0]; i++)
+	for (i = 0; i < nlin; i++)
     	free(quadro[i]);
 	free(quadro);
 }
 
 int menu_simul()
 {
-    int i;
+    int i = 0;
     do {
-        printf("1 - Modificar limite de satisfacao");
-        printf("2 - Modificar tipo de vizinhanca");
-        printf("3 - Modificar tipo de deslocamento");
-        printf("4 - Continuar simulacao");
-    } while (i < 1 || i > 4);
+        linha();
+        printf("1 - Modificar limite de satisfacao\n");
+        printf("2 - Modificar tipo de vizinhanca\n");
+        printf("3 - Modificar tipo de deslocamento\n");
+        printf("4 - Terminar Simulacao\n");
+        printf("5 - Continuar simulacao\n");
+        printf("Escolha uma Opcao: "); scanf("%d", &i);
+    } while (i < 1 || 5 < i);
     return i;
 }
 
-void simul_passo(Configuracoes C, int *PrimVez)
+void simul_passo(Configuracoes C, int PrimVez)
 {
     int **quadro;
-    int erro = 0, i, j, x, y, p, iter;
+    int erro = 0, i, j, x, y, p, iter, m;
     int satis;
-    if (*PrimVez == 1){ // ConfiguraÁıes STANDARD (se ainda nao tiver sido escolhido uma configuraÁ„o)
-        C = inicializ();
+    if (PrimVez == 1){  // Configuracoes STANDARD (se ainda nao tiver sido escolhido uma configuraÁao)
+        mostra(C); putchar('\n');
         C = Standard(&erro);
         if (erro == 1)
             return;
     }
+    mostra(C); putchar('\n');//
 
     // Criar quadro com base nas configs
-    quadro = malloc(C.DimGrid[0] * sizeof(int *));
+    quadro = malloc(C.DimGrid[1] * sizeof(int *));
     if (quadro == NULL)
     {
         printf("Nao ha memoria para o quadro");
         exit(0);
     }
     printf("Array de ponteiros criado\n" ); // remover linha
-    for (i = 0; i < C.DimGrid[0]; i++)
+    for (i = 0; i < C.DimGrid[1]; i++)
     {
         quadro[i] = malloc(C.DimGrid[1] * sizeof(int));
         if (quadro[i] == NULL)
@@ -199,11 +250,51 @@ void simul_passo(Configuracoes C, int *PrimVez)
         }
     }
 
-    mostrar_quadro(C.DimGrid[0], C.DimGrid[1], quadro);
-
-
     for (iter = 0; iter < C.NIter; iter ++) // iteracoes especificadas na configuracao
     {
+        m = menu_simul();
+        if (m == 1)
+        {
+            if (C.NPop == 2)
+            {
+                printf("Novo limite de satisfacao para populacao 1: ");
+                scanf("%f", &(C.PercSatisf[0]));
+
+                printf("Novo limite de satisfacao para populacao 2: ");
+                scanf("%f", &(C.PercSatisf[1]));
+            }
+            else if (C.NPop == 3)
+            {
+                printf("Novo limite de satisfacao para populacao 1: ");
+                scanf("%f", &(C.PercSatisf[0]));
+
+                printf("Novo limite de satisfacao para populacao 2: ");
+                scanf("%f", &(C.PercSatisf[1]));
+
+                printf("Novo limite de satisfacao para populacao 3: ");
+                scanf("%f", &(C.PercSatisf[2]));
+            }
+        }
+        else if (m == 2)
+        {
+            do {
+                printf("Tipo de vizinhanca (1:Von Neumann; 2:Moore): ");
+                scanf(" %d", &(C.TipoViz));
+            } while (C.TipoViz<1 || C.TipoViz>2);        
+        }
+        else if (m == 3)
+        {
+            do{
+                printf("Deslocamento dos agentes (1:celula mais proxima; 2:aleatorio): ");
+                scanf(" %d", &(C.Desloc));
+            } while (C.TipoViz<1 || C.TipoViz>2);
+        }
+        else if (m == 4)
+        {
+            break;
+        }
+
+        mostrar_quadro(C.DimGrid[0], C.DimGrid[1], quadro);
 
         for (i = 0; i < C.DimGrid[0]; i++)
         {
@@ -243,7 +334,7 @@ void simul_passo(Configuracoes C, int *PrimVez)
     }
  
     // free arrays
-    for (i = 0; i < C.DimGrid[0]; i++)
+    for (i = 0; i < C.DimGrid[1]; i++)
         free(quadro[i]);
     free(quadro);    
 }

@@ -24,8 +24,17 @@ PercSatisf	K: 50 50		Percentagem/Limite de satisfaÁ„o para cada populaÁ„o
 Desloc		MOVE: 1			Deslocamento dos agentes (1:cÈlula mais prÛxima; 2:aleatÛrio)
 NIter		NUM_ITER: 50	N˙mero m·ximo de iteraÁıes
 */
+typedef struct peca_ins peca_ins, *ppeca_ins;
+
+struct peca_ins
+{
+	int x, y, p; // coordenadas das pecas instisfeitas e tipo
+	ppeca_ins *prox;
+
+};
 
 void linha();
+void mostra(Configuracoes p);
 Configuracoes Read_Config(char nomefic[15], int *erro);
 Configuracoes Choose_Config();
 void See_Config(Configuracoes C);

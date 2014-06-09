@@ -3,13 +3,36 @@
 #include <stdlib.h>
 #include "config.h"
 
+void linha(){
+    int i;
+    for (i = 0; i < 60; i++)
+        putchar('_');
+    puts("\n");
+}
+void mostra(Configuracoes p){
+ linha();
+ printf("DIM: %d %d\n", p.DimGrid[0], p.DimGrid[1]);
+ printf("POPS: %d\n", p.NPop);
+ printf("DIM_POP: %d\n", p.DimPop);
+ printf("VIZ: %d\n", p.TipoViz);
+ printf("FRONTEIRA: %d\n", p.TipoFront);
+ if (p.NPop == 2)
+  printf("K: %2.0f %2.0f\n", p.PercSatisf[0], p.PercSatisf[1]);
+ else
+  printf("K: %2.0f %2.0f %2.0f\n", p.PercSatisf[0], p.PercSatisf[1], p.PercSatisf[2]);
+ printf("MOVE: %d\n", p.Desloc);
+ printf("NUM_ITER: %d\n", p.NIter);
+}
+
+
+
 Configuracoes Read_Config(char nomefic[15], int *erro){	//ler configuaraÁoes pre-defindas e presonalizadas nos ficheiros
 	Configuracoes C;
 	FILE *f;
 	f = fopen(nomefic, "r");
 	if (f != NULL){
-		fscanf(f, " DIM: %d %d", &(C.DimGrid[0]), &(C.DimGrid[1]));//[^DIM:]
-		fscanf(f, " POPS: %d", &(C.NPop));//[^POPS:]
+		fscanf(f, " DIM: %d %d", &(C.DimGrid[0]), &(C.DimGrid[1]));
+		fscanf(f, " POPS: %d", &(C.NPop));
 		fscanf(f, " DIM_POP: %d", &(C.DimPop));
 		fscanf(f, " VIZ: %d", &(C.TipoViz));
 		fscanf(f, " FRONTEIRA: %d", &(C.TipoFront));
@@ -17,7 +40,7 @@ Configuracoes Read_Config(char nomefic[15], int *erro){	//ler configuaraÁoes pr
 		if (C.NPop == 2){
 			fscanf(f, " K: %f %f", &(C.PercSatisf[0]), &(C.PercSatisf[1]));
 		}
-		else //Se nao... entao existem 3 percentagens fe satisfaÁao
+		else //Se nao... entao existem 3 percentagens de satisfaÁao
 			fscanf(f, " K: %f %f %f", &(C.PercSatisf[0]), &(C.PercSatisf[1]), &(C.PercSatisf[2]));
 		fscanf(f, " MOVE: %d", &(C.Desloc));
 		fscanf(f, " NUM_ITER: %d", &(C.NIter));
@@ -30,7 +53,7 @@ Configuracoes Read_Config(char nomefic[15], int *erro){	//ler configuaraÁoes pr
 	return C;
 }
 
-void See_Config(Configuracoes C){	//Mostrar conteudo dos 3 ficheiros de texto com as configuraÁoes pre-definidas
+void See_Config(Configuracoes C){	//Mostrar conteudo dos 3 ficheiros de texto com as configuraÁoes pre-definidas OU config pessoais se existirem
 	int v, falha = 0;
 	char r;
 	do{
@@ -65,9 +88,9 @@ void See_Config(Configuracoes C){	//Mostrar conteudo dos 3 ficheiros de texto co
 			printf("VIZ: %d\n", C.TipoViz);
 			printf("FRONTEIRA: %d\n", C.TipoFront);
 			if (C.NPop == 2)
-				printf("K: %f %f\n", C.PercSatisf[0], C.PercSatisf[1]);
+				printf("K: %2.0f %2.0f\n", C.PercSatisf[0], C.PercSatisf[1]);
 			else
-				printf("K: %f %f %f\n", C.PercSatisf[0], C.PercSatisf[1], C.PercSatisf[2]);
+				printf("K: %2.0f %2.0f %2.0f\n", C.PercSatisf[0], C.PercSatisf[1], C.PercSatisf[2]);
 			printf("MOVE: %d\n", C.Desloc);
 			printf("NUM_ITER: %d\n", C.NIter);
 		}
@@ -76,7 +99,7 @@ void See_Config(Configuracoes C){	//Mostrar conteudo dos 3 ficheiros de texto co
 	} while (r == 's' || r == 'S');
 }
 
-Configuracoes Choose_Config(){	//Escolher qual a configuraÁ„o a utilizar na simulaÁ„o 
+Configuracoes Choose_Config(int *PrimVez){	//Escolher qual a configuraÁ„o a utilizar na simulaÁ„o 
 	int r, falha = 0;
 	Configuracoes C;
 	char rc;
@@ -97,9 +120,9 @@ Configuracoes Choose_Config(){	//Escolher qual a configuraÁ„o a utilizar na s
 			printf("\nPretende escolher outra configuracao? (s ou n): "); scanf(" %c", &rc);
 		}
 		else{
+			*PrimVez = 0;
 			rc = 'n';
 		}
-		falha = 0;
 	} while (rc == 's' || rc == 'S');
 	return C;
 }
@@ -126,7 +149,7 @@ void Save_Config(Configuracoes C){	//guardar configuraÁıes pessoais num novo f
 	}
 }
 
-Configuracoes Obter_PersonalConfig(){
+Configuracoes Obter_PersonalConfig(int *PrimVez){
 	linha();
 	char r;
 	Configuracoes C;
@@ -192,10 +215,11 @@ Configuracoes Obter_PersonalConfig(){
 	printf("\nPretende guardar estas configuracoes para utilizacao frequente? (s ou n): "); scanf(" %c", &r);
 	if (r == 's' || r == 'S')
 		Save_Config(C);
+	*PrimVez = 0;
 	return C;
 }
 
-Configuracoes inicializ(){
+Configuracoes inicializ(){ //incializaÁ„o da estrutura - poe tudo a zeros
 	Configuracoes c;
 	c.DimGrid[0] = 0;
 	c.DimGrid[1] = 0;
@@ -203,7 +227,7 @@ Configuracoes inicializ(){
 	c.DimPop = 0;
 	c.TipoViz = 0;
 	c.TipoFront = 0;
-	c.PercSatisf = malloc(sizeof(float));
+	c.PercSatisf = malloc(sizeof(int));
 	c.PercSatisf[0] = 0;
 	c.PercSatisf[1] = 0;
 	c.Desloc = 0;
@@ -211,7 +235,7 @@ Configuracoes inicializ(){
 	return c;
 }
 
-int MenuConfig(){
+int MenuConfig(){	//menu das opÁoes que o utilizador pode escolher
 	int x;
 	do{
 		linha();
@@ -228,22 +252,22 @@ int MenuConfig(){
 }
 
 Configuracoes config(int *PrimVez){
-	int x;
+	int x, FirstTime = *PrimVez;
 	Configuracoes C;
-	if (*PrimVez == 1){
+	if (FirstTime == 1){	//se esta funÁao for chamada pela primeira vez, inicializa a estrutura
 		C = inicializ();
-		*PrimVez++;
 	}
 	do{
 		x = MenuConfig();
 		switch (x)
 		{
 		case 1: See_Config(C); break;
-		case 2: C = Choose_Config(); break;
-		case 3: C = Obter_PersonalConfig(); break;
+		case 2: C = Choose_Config(&FirstTime); break;
+		case 3: C = Obter_PersonalConfig(&FirstTime); break;
 		default:
 			break;
 		}
-	} while (x != 4);
+	} while (x != 4); 
+	*PrimVez = FirstTime;
 	return C;
 }
